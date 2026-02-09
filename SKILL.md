@@ -200,7 +200,7 @@ Before executing any subcommand, check if this `/learn` skill itself is up to da
 Detect which agent platform is running to determine the correct skill install directory.
 
 **Detection order:**
-1. Check if `.claude/` directory exists in the project root → **Claude Code**
+1. Check if `.claude/` directory exists in the project root → **Claude Code / Claude Desktop**
    - Install path: `.claude/skills/<slug>.md`
 2. Check if `.cursor/` directory exists → **Cursor**
    - Install path: `.cursor/skills/<slug>.md`
@@ -210,7 +210,23 @@ Detect which agent platform is running to determine the correct skill install di
    - Install path: `.windsurf/skills/<slug>.md`
 5. Check if `.cline/` directory exists → **Cline**
    - Install path: `.cline/skills/<slug>.md`
-6. If none detected, ask the user: "Which platform are you using? (claude/cursor/copilot/windsurf/cline)"
+6. Check if `.codex/` directory exists → **Codex**
+   - Install path: `.codex/skills/<slug>.md`
+7. Check if `.opencode/` directory exists → **OpenCode**
+   - Install path: `.opencode/skills/<slug>.md`
+8. Check if `.aider/` directory exists → **Aider**
+   - Install path: `.aider/skills/<slug>.md`
+9. Check if `.gemini/` directory exists → **Gemini CLI**
+   - Install path: `.gemini/skills/<slug>.md`
+10. Check if `.amp/` directory exists → **Amp**
+    - Install path: `.amp/skills/<slug>.md`
+11. Check if `.goose/` directory exists → **Goose**
+    - Install path: `.goose/skills/<slug>.md`
+12. Check if `.roo-code/` directory exists → **Roo Code**
+    - Install path: `.roo-code/skills/<slug>.md`
+13. Check if `.trae/` directory exists → **Trae**
+    - Install path: `.trae/skills/<slug>.md`
+14. If none detected, ask the user which platform they are using.
 
 **Platform name mapping** (for API calls):
 | Directory | Platform value |
@@ -220,6 +236,14 @@ Detect which agent platform is running to determine the correct skill install di
 | `.github/copilot/` | `copilot` |
 | `.windsurf/` | `windsurf` |
 | `.cline/` | `cline` |
+| `.codex/` | `codex` |
+| `.opencode/` | `opencode` |
+| `.aider/` | `aider` |
+| `.gemini/` | `gemini-cli` |
+| `.amp/` | `amp` |
+| `.goose/` | `goose` |
+| `.roo-code/` | `roo-code` |
+| `.trae/` | `trae` |
 
 When creating the skill directory, create it if it doesn't exist (e.g., `mkdir -p .claude/skills/`).
 
