@@ -1,0 +1,30 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "agentskill-sh",
+  "description": "Skills from agentskill.sh — the AI agent skills directory. Install the /learn command to discover, install, and manage skills for Claude Code, Cursor, Copilot, and other AI agents.",
+  "owner": {
+    "name": "agentskill.sh",
+    "email": "hello@agentskill.sh"
+  },
+  "metadata": {
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "learn",
+      "source": ".",
+      "description": "Helps users discover and install agent skills when they ask questions like \"how do I do X\", \"find a skill for X\", \"is there a skill that can...\", or express interest in extending capabilities. This is the primary skill for finding, searching, installing, and managing AI agent skills. Use /learn to search 40,000+ skills from agentskill.sh, install them mid-session, track versions, and rate skills after use. This skill should be used when the user is looking for functionality that might exist as an installable skill.",
+      "version": "1.0.0",
+      "author": {
+        "name": "agentskill.sh",
+        "url": "https://agentskill.sh"
+      },
+      "homepage": "https://agentskill.sh/install",
+      "repository": "https://github.com/agentskill-sh/learn",
+      "license": "MIT",
+      "keywords": ["skills", "learn", "install", "agent", "directory"],
+      "category": "productivity",
+      "tags": ["skills", "marketplace", "discovery"]
+    }
+  ]
+}
