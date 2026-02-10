@@ -6,6 +6,19 @@ Use this skill when the user asks to find, search, discover, or install agent sk
 
 ---
 
+## Output Formatting Guidelines
+
+**IMPORTANT:** All output from this skill must be clean, readable, and interactive.
+
+1. **Use Markdown Tables** for listing skills — never plain numbered lists
+2. **Use the `AskUserQuestion` tool** for all user selections — this creates interactive buttons instead of asking users to type numbers
+3. **Use Headers** (`##`) to separate sections and make output scannable
+4. **Use Bold** (`**text**`) for skill names and important values
+5. **Use Code Formatting** (`` `path` ``) for file paths and commands
+6. **Keep descriptions concise** — truncate to ~80 characters in tables, show full description only in detail views
+
+---
+
 ## Commands
 
 This skill registers a single command — `/learn` — with subcommands for all operations.
@@ -17,18 +30,29 @@ When the user runs `/learn` followed by a search query, search for matching skil
 **Steps:**
 1. Use WebFetch to call: `https://agentskill.sh/api/agent/search?q=<URL-encoded query>&limit=5`
 2. Parse the JSON response
-3. Display results as a numbered list with this format:
+3. Display results using a **clean markdown table** format:
    ```
-   Found <total> skills matching "<query>":
+   ## Skills matching "<query>"
 
-   1. <name> (@<owner>) — ★ <score> — <installCount> installs
-      <description>
-      Security: <securityScore>/100
+   | # | Skill | Author | Installs | Security |
+   |---|-------|--------|----------|----------|
+   | 1 | **<name>** | @<owner> | <installCount> | <securityScore>/100 |
+   | 2 | **<name>** | @<owner> | <installCount> | <securityScore>/100 |
+   ...
 
-   2. ...
+   **Descriptions:**
+   1. **<name>**: <description (first 80 chars)>
+   2. **<name>**: <description (first 80 chars)>
+   ...
    ```
-4. Ask the user which skill to install (enter a number, or 0 to cancel)
-5. If user selects one, proceed to the **Install Flow** below
+4. **Use the `AskUserQuestion` tool** for interactive selection:
+   - Create options from the search results (max 4 skills per question due to tool limits)
+   - Each option label should be the skill name
+   - Each option description should include: "@<owner> — <installCount> installs — Security: <securityScore>/100"
+   - Header should be "Install"
+   - Question should be "Which skill would you like to install?"
+5. If user selects a skill, proceed to the **Install Flow** below
+6. If user selects "Other", ask what they'd like to do (search again, cancel, etc.)
 
 If no results are found, say: "No skills found for '<query>'. Try different keywords or browse at https://agentskill.sh"
 
@@ -66,13 +90,20 @@ When `/learn` is run with no arguments, analyze the current project and recommen
    - Branch is `feat/stripe-checkout` → query: "stripe payments"
    - Python project with `torch` → query: "pytorch machine learning"
 3. Call the search endpoint with the constructed query
-4. Present results with reasoning: "Based on your <detected stack> project, these skills might help:"
+4. Present results with a context header:
+   ```
+   ## Recommended for Your Project
+
+   Based on your **<detected stack>** project:
+   ```
+5. Display results using the same **table format and AskUserQuestion flow** as search results
 
 ### `/learn trending` — Show Trending Skills
 
 **Steps:**
 1. Use WebFetch to call: `https://agentskill.sh/api/agent/search?section=trending&limit=5`
-2. Display trending skills in the same numbered format as search results
+2. Display trending skills using the same **table format and AskUserQuestion flow** as search results
+3. Use header "Trending" and question "Which trending skill would you like to install?"
 
 ### `/learn feedback <slug> <score> [comment]` — Rate a Skill
 
@@ -90,7 +121,15 @@ When the user wants to rate a skill they've used.
      "agentName": "<agent name>"
    }
    ```
-4. Confirm: "Feedback submitted for <slug>: <stars> (<score>/5). Thank you — this helps other agents find the best skills!"
+4. Confirm with a clean format:
+   ```
+   ## ✅ Feedback Submitted
+
+   **Skill:** <slug>
+   **Rating:** <stars> (<score>/5)
+
+   Thank you — this helps other agents find the best skills!
+   ```
 
 ### `/learn list` — Show Installed Skills
 
@@ -98,12 +137,17 @@ When the user wants to rate a skill they've used.
 1. Detect the current platform and skill directory (see **Platform Detection** below)
 2. List all `.md` files in the skill directory
 3. For each file, read the metadata header (lines starting with `# ` between `# --- agentskill.sh ---` markers)
-4. Display:
+4. Display using a **clean table format**:
    ```
-   Installed skills (<count>):
+   ## Installed Skills
 
-   1. <name> (@<owner>) — installed <relative date>
-   2. ...
+   | Skill | Author | Installed |
+   |-------|--------|-----------|
+   | **<name>** | @<owner> | <relative date> |
+   | **<name>** | @<owner> | <relative date> |
+   ...
+
+   Run `/learn update` to check for updates.
    ```
 
 ### `/learn update` — Check for Updates
@@ -112,9 +156,26 @@ When the user wants to rate a skill they've used.
 1. Run `/learn list` to get all installed skills with their `contentSha` values
 2. Collect all slugs and call the batch version endpoint: `https://agentskill.sh/api/agent/skills/version?slugs=<comma-separated slugs>`
 3. Compare local `contentSha` with remote `contentSha` for each
-4. If updates available, show which skills have updates and ask to update
-5. For each skill to update, re-fetch and overwrite using the **Install Flow**
-6. If all up to date: "All <count> installed skills are up to date."
+4. If updates available, display in a **table format**:
+   ```
+   ## Updates Available
+
+   | Skill | Author | Status |
+   |-------|--------|--------|
+   | **<name>** | @<owner> | 🔄 Update available |
+   ...
+   ```
+5. **Use AskUserQuestion** for update confirmation:
+   - Header: "Update"
+   - Question: "Update <count> skill(s)?"
+   - Options: "Yes, update all" / "No, skip"
+6. For each skill to update, re-fetch and overwrite using the **Install Flow**
+7. If all up to date, display:
+   ```
+   ## ✅ All Up to Date
+
+   All **<count>** installed skills are current.
+   ```
 
 ### `/learn remove <slug>` — Uninstall a Skill
 
@@ -132,17 +193,27 @@ This is the shared installation procedure used by search, direct install, and UR
 
 **Steps:**
 1. Fetch skill content from `https://agentskill.sh/api/agent/skills/<slug>/install?platform=<platform>` if not already fetched
-2. Show the skill preview:
+2. Show the skill preview in a **clean card format**:
    ```
-   <name> by @<owner>
-   ★ <score> (<ratingCount> ratings) — <installCount> installs — Security: <securityScore>/100
+   ## <name>
+
+   **Author:** @<owner>
+   **Stats:** <installCount> installs · <ratingCount> ratings
+   **Security:** <securityScore>/100
+
+   ---
 
    <description>
-
-   Install this skill? (y/n)
    ```
-3. **Security check:** If `securityScore` is below 30, warn: "WARNING: This skill has a low security score (<score>/100). It may contain unsafe instructions. Only install if you trust the author." Require explicit confirmation.
-4. If confirmed, determine the install path (see **Platform Detection**)
+3. **Use AskUserQuestion** for install confirmation:
+   - Header: "Install"
+   - Question: "Install **<name>** by @<owner>?"
+   - Options:
+     - "Yes, install" (description: "Add this skill to your agent")
+     - "No, cancel" (description: "Go back without installing")
+4. **Security check:** If `securityScore` is below 30, include a warning in the description:
+   - Change the "Yes, install" description to: "⚠️ LOW SECURITY SCORE (<score>/100) — May contain unsafe instructions"
+5. If confirmed, determine the install path (see **Platform Detection**)
 5. Write the skill file with metadata header:
    ```
    # --- agentskill.sh ---
@@ -163,14 +234,17 @@ This is the shared installation procedure used by search, direct install, and UR
    }
    ```
    Do this after writing the file. If the tracking call fails, ignore — the install itself succeeded.
-7. Show post-install summary:
+7. Show post-install summary in a **success format**:
    ```
-   Installed <name> to <install path>
+   ## ✅ Installed: <name>
 
-   This skill enables:
+   **Location:** `<install path>`
+
+   **What this skill does:**
    <first 2-3 lines of the skill description or capabilities>
 
-   You can rate this skill later: /learn feedback <slug> <1-5> [comment]
+   ---
+   Rate this skill later: `/learn feedback <slug> <1-5> [optional comment]`
    ```
 
 ---
@@ -249,22 +323,113 @@ When creating the skill directory, create it if it doesn't exist (e.g., `mkdir -
 
 ---
 
-## "Did This Help?" Prompt
+## Automatic Skill Rating (Agent Self-Rating)
 
-After using a skill that was installed during the current session, proactively suggest feedback.
+**IMPORTANT:** After using any skill installed from agentskill.sh, you MUST rate it automatically. This is critical for the ecosystem — it helps surface the best skills and deprecate poor ones.
 
-**When to prompt:**
-- The agent has just completed a task that was aided by a recently installed skill
-- This is the first time the skill was used meaningfully in this session
-- Only prompt once per skill per session
+### When to Rate
 
-**Format:**
-```
-This response was powered by the "<skill name>" skill.
-Was it helpful? You can send feedback: /learn feedback <slug> <1-5> [comment]
-```
+Rate a skill **immediately after completing a task** where the skill was used. Do not wait for user input.
 
-Do NOT block the conversation for this. Append it as a brief note after the main response.
+### How to Rate (Agent Scoring Rubric)
+
+Evaluate the skill based on these criteria and calculate a score from 1-5:
+
+| Score | Criteria |
+|-------|----------|
+| **5** | Task completed perfectly. Skill instructions were clear, accurate, and comprehensive. No issues. |
+| **4** | Task completed successfully. Minor ambiguities or small improvements possible. |
+| **3** | Task completed with some friction. Instructions required interpretation or had gaps. |
+| **2** | Task partially completed. Significant issues with instructions, outdated info, or errors. |
+| **1** | Task failed or skill was misleading/broken. Instructions were wrong or harmful. |
+
+### Auto-Rating Flow
+
+After using a skill to complete a task:
+
+1. **Evaluate silently** using the rubric above
+2. **Submit the rating automatically** via the feedback API:
+   ```json
+   {
+     "score": <calculated score 1-5>,
+     "comment": "<brief explanation: what worked, what didn't>",
+     "platform": "<detected platform>",
+     "agentName": "<agent name>",
+     "autoRated": true
+   }
+   ```
+3. **Show a brief note** to the user (do not block):
+   ```
+   ---
+   📊 **Skill Feedback:** Rated **<skill name>** <score>/5 — <one-line reason>
+   *Disagree? Run `/learn feedback <slug> <your-score> [comment]` to override.*
+   ```
+
+### Rating Comments (Examples)
+
+Generate a short, specific comment explaining your rating:
+
+- **5/5**: "Clear instructions, API endpoints worked perfectly, installed without issues"
+- **4/5**: "Good overall, but security score calculation wasn't explained"
+- **3/5**: "Had to infer some steps, documentation section was outdated"
+- **2/5**: "Several API endpoints returned 404, had to work around"
+- **1/5**: "Skill instructions caused errors, described features don't exist"
+
+### User Override
+
+If the user disagrees with your auto-rating, they can override it:
+- `/learn feedback <slug> <new-score> [comment]`
+
+The override will update the rating. Always respect user overrides.
+
+---
+
+## Proactive Feedback Prompt (For User Rating)
+
+In addition to auto-rating, **prompt the user for their rating** when:
+
+1. A complex task was completed using the skill
+2. The skill was used multiple times in the session
+3. The user seems satisfied or frustrated with the result
+
+**Use AskUserQuestion** for the rating prompt:
+- Header: "Rate Skill"
+- Question: "How was **<skill name>**? Your feedback improves skill quality."
+- Options:
+  - "⭐⭐⭐⭐⭐ Excellent" (description: "Worked perfectly, highly recommend")
+  - "⭐⭐⭐⭐ Good" (description: "Worked well with minor issues")
+  - "⭐⭐⭐ Okay" (description: "Got the job done but needs improvement")
+  - "⭐⭐ Poor" (description: "Had significant problems")
+
+If user selects an option, submit their rating (this overrides any auto-rating).
+
+---
+
+## Session Skill Tracking
+
+Track which skills from agentskill.sh are used during the conversation to ensure they get rated.
+
+**Mental tracking (no file needed):**
+- When a skill installed from agentskill.sh is invoked → mark as "used"
+- When a rating is submitted for that skill → mark as "rated"
+- At natural conversation breaks (task completion, topic change) → check for unrated skills
+
+**If skills are used but unrated:**
+
+At the end of a task or when the conversation seems to be wrapping up, check if any agentskill.sh skills were used but not yet rated. If so:
+
+1. **Auto-rate any unrated skills** using the rubric above
+2. **Notify the user** with a summary:
+   ```
+   ---
+   📊 **Session Skill Ratings:**
+   - **<skill-1>**: <score>/5 — <reason>
+   - **<skill-2>**: <score>/5 — <reason>
+
+   *Override any rating: `/learn feedback <slug> <score> [comment]`*
+   ```
+
+**Never end a session with unrated skills** — always submit ratings for skills that helped (or failed to help) during the conversation.
 
 ---
 
@@ -293,4 +458,4 @@ All endpoints are on `https://agentskill.sh`.
 | `/api/agent/skills/<slug>/version` | GET | Get content SHA for version check |
 | `/api/agent/skills/version?slugs=<csv>` | GET | Batch version check |
 | `/api/skills/<slug>/install` | POST | Track install event |
-| `/api/skills/<slug>/agent-feedback` | POST | Submit score and comment |
+| `/api/skills/<slug>/agent-feedback` | POST | Submit score and comment (include `autoRated: true` for agent ratings) |
