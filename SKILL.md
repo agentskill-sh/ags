@@ -36,9 +36,11 @@ This skill registers a single command — `/learn` — with subcommands for all 
 When the user runs `/learn` followed by a search query, search for matching skills.
 
 **Steps:**
+
 1. Use WebFetch to call: `https://agentskill.sh/api/agent/search?q=<URL-encoded query>&limit=5`
 2. Parse the JSON response
 3. Display results using a **clean markdown table** format:
+
    ```
    ## Skills matching "<query>"
 
@@ -53,6 +55,7 @@ When the user runs `/learn` followed by a search query, search for matching skil
    2. **<name>**: <description (first 80 chars)>
    ...
    ```
+
 4. **Use the `AskUserQuestion` tool** for interactive selection:
    - Create options from the search results (max 4 skills per question due to tool limits)
    - Each option label should be the skill name
@@ -69,6 +72,7 @@ If no results are found, say: "No skills found for '<query>'. Try different keyw
 When the argument starts with `@`, treat it as a direct install request.
 
 **Steps:**
+
 1. Parse the owner and slug from the argument (split on `/`)
 2. Use WebFetch to call: `https://agentskill.sh/api/agent/skills/<slug>/install?owner=<owner>`
 3. If found, show the skill preview and proceed to **Install Flow**
@@ -79,6 +83,7 @@ When the argument starts with `@`, treat it as a direct install request.
 When the argument starts with `http`, treat it as a URL install.
 
 **Steps:**
+
 1. Parse the slug from the URL path (last segment of `https://agentskill.sh/<slug>`)
 2. Use WebFetch to call: `https://agentskill.sh/api/agent/skills/<slug>/install`
 3. Proceed to **Install Flow**
@@ -88,6 +93,7 @@ When the argument starts with `http`, treat it as a URL install.
 When `/learn` is run with no arguments, analyze the current project and recommend skills.
 
 **Steps:**
+
 1. Detect the current project context:
    - Read `package.json` if it exists — extract key dependencies (react, next, vue, prisma, stripe, etc.)
    - Check for language indicators: `.py` files → python, `.rs` → rust, `.go` → go, `.rb` → ruby
@@ -99,16 +105,19 @@ When `/learn` is run with no arguments, analyze the current project and recommen
    - Python project with `torch` → query: "pytorch machine learning"
 3. Call the search endpoint with the constructed query
 4. Present results with a context header:
+
    ```
    ## Recommended for Your Project
 
    Based on your **<detected stack>** project:
    ```
+
 5. Display results using the same **table format and AskUserQuestion flow** as search results
 
 ### `/learn trending` — Show Trending Skills
 
 **Steps:**
+
 1. Use WebFetch to call: `https://agentskill.sh/api/agent/search?section=trending&limit=5`
 2. Display trending skills using the same **table format and AskUserQuestion flow** as search results
 3. Use header "Trending" and question "Which trending skill would you like to install?"
@@ -118,6 +127,7 @@ When `/learn` is run with no arguments, analyze the current project and recommen
 When the user wants to rate a skill they've used.
 
 **Steps:**
+
 1. Parse arguments: `slug` (required), `score` (required, integer 1-5), `comment` (optional, rest of the string)
 2. Validate score is between 1 and 5. If not, say: "Score must be between 1 and 5"
 3. Use WebFetch to POST to `https://agentskill.sh/api/skills/<slug>/agent-feedback` with JSON body:
@@ -130,6 +140,7 @@ When the user wants to rate a skill they've used.
    }
    ```
 4. Confirm with a clean format:
+
    ```
    ## Feedback Submitted
 
@@ -142,10 +153,12 @@ When the user wants to rate a skill they've used.
 ### `/learn list` — Show Installed Skills
 
 **Steps:**
+
 1. Detect the current platform and skill directory (see **Platform Detection** below)
 2. List all `.md` files in the skill directory
 3. For each file, read the metadata header (lines starting with `# ` between `# --- agentskill.sh ---` markers)
 4. Display using a **clean table format**:
+
    ```
    ## Installed Skills
 
@@ -161,10 +174,12 @@ When the user wants to rate a skill they've used.
 ### `/learn update` — Check for Updates
 
 **Steps:**
+
 1. Run `/learn list` to get all installed skills with their `contentSha` values
 2. Collect all slugs and call the batch version endpoint: `https://agentskill.sh/api/agent/skills/version?slugs=<comma-separated slugs>`
 3. Compare local `contentSha` with remote `contentSha` for each
 4. If updates available, display in a **table format**:
+
    ```
    ## Updates Available
 
@@ -173,12 +188,14 @@ When the user wants to rate a skill they've used.
    | **<name>** | @<owner> | Update available |
    ...
    ```
+
 5. **Use AskUserQuestion** for update confirmation:
    - Header: "Update"
    - Question: "Update <count> skill(s)?"
    - Options: "Yes, update all" / "No, skip"
 6. For each skill to update, re-fetch and overwrite using the **Install Flow** (includes security re-scan)
 7. If all up to date, display:
+
    ```
    ## All Up to Date
 
@@ -190,6 +207,7 @@ When the user wants to rate a skill they've used.
 ### `/learn remove <slug>` — Uninstall a Skill
 
 **Steps:**
+
 1. Detect the skill directory (see **Platform Detection**)
 2. Check if `<slug>.md` exists in the skill directory
 3. If exists, delete the file and confirm: "Removed <slug> from installed skills."
@@ -200,6 +218,7 @@ When the user wants to rate a skill they've used.
 Scan a local skill file without installing. Use to audit skills before install or check existing skills.
 
 **Steps:**
+
 1. Read the skill file at `<path>` (or look for SKILL.md in directory if path is a directory)
 2. Run the **Security Scan** (see below)
 3. Display the full security report
@@ -209,6 +228,7 @@ Scan a local skill file without installing. Use to audit skills before install o
 Scan the current directory for skill files.
 
 **Steps:**
+
 1. Look for `SKILL.md` in current directory
 2. Run the **Security Scan** on found files
 3. Display the full security report
@@ -218,6 +238,7 @@ Scan the current directory for skill files.
 Enable or disable automatic skill rating after use.
 
 **Steps:**
+
 1. Parse the argument (`on` or `off`)
 2. Store preference (in skill metadata or local config)
 3. Confirm: "Auto-rating is now <enabled/disabled>."
@@ -231,19 +252,21 @@ When disabled, agents will not automatically rate skills after use. Users can st
 This is the shared installation procedure used by search, direct install, and URL install.
 
 **Steps:**
+
 1. Fetch skill content from `https://agentskill.sh/api/agent/skills/<slug>/install?platform=<platform>` if not already fetched
 
 2. **Run Security Scan** on the fetched content (see **Security Scan** section below)
 
 3. **Handle scan results based on score:**
 
-   | Score | Rating | Action |
-   |-------|--------|--------|
-   | 90-100 | SAFE | Show "Security: PASSED", proceed normally |
-   | 70-89 | REVIEW | Show issues, require explicit acknowledgment |
-   | <70 | DANGER | **BLOCK** — refuse to install, show full report |
+   | Score  | Rating | Action                                          |
+   | ------ | ------ | ----------------------------------------------- |
+   | 90-100 | SAFE   | Show "Security: PASSED", proceed normally       |
+   | 70-89  | REVIEW | Show issues, require explicit acknowledgment    |
+   | <70    | DANGER | **BLOCK** — refuse to install, show full report |
 
 4. Show the skill preview in a **clean card format**:
+
    ```
    ## <name>
 
@@ -257,6 +280,7 @@ This is the shared installation procedure used by search, direct install, and UR
    ```
 
 5. If score < 70 (DANGER): Stop here. Display:
+
    ```
    ## Installation Blocked
 
@@ -290,6 +314,7 @@ This is the shared installation procedure used by search, direct install, and UR
 7. If confirmed, determine the install path (see **Platform Detection**)
 
 8. Write the skill file with metadata header:
+
    ```
    # --- agentskill.sh ---
    # slug: <slug>
@@ -304,15 +329,18 @@ This is the shared installation procedure used by search, direct install, and UR
    ```
 
 9. Track the install — use WebFetch to POST to `https://agentskill.sh/api/skills/<slug>/install` with JSON body:
+
    ```json
    {
      "platform": "<detected platform>",
      "agentName": "<agent name>"
    }
    ```
+
    Do this after writing the file. If the tracking call fails, ignore — the install itself succeeded.
 
 10. Show post-install summary:
+
     ```
     ## Installed: <name>
 
@@ -447,15 +475,16 @@ Minimum = 0
 Note: 5+ CRITICAL findings = instant 0
 ```
 
-| Score | Rating | Action |
-|-------|--------|--------|
-| 90-100 | SAFE | Allow install |
-| 70-89 | REVIEW | Show issues, require acknowledgment |
-| <70 | DANGER | Block install, treat as potential incident |
+| Score  | Rating | Action                                     |
+| ------ | ------ | ------------------------------------------ |
+| 90-100 | SAFE   | Allow install                              |
+| 70-89  | REVIEW | Show issues, require acknowledgment        |
+| <70    | DANGER | Block install, treat as potential incident |
 
 ### Build Inventory
 
 After scanning, list:
+
 - All URLs/endpoints (flag suspicious ones)
 - All file paths accessed
 - All shell commands found
@@ -467,6 +496,7 @@ After scanning, list:
 After completing a scan (whether for install or via `/learn scan`), **report any issues found** to help improve the ecosystem:
 
 1. If issues were detected (score < 100), submit a security report:
+
    ```
    POST https://agentskill.sh/api/agent/security-reports
    {
@@ -526,6 +556,7 @@ After completing a scan (whether for install or via `/learn scan`), **report any
 Before executing any subcommand, check if this `/learn` skill itself is up to date.
 
 **Steps:**
+
 1. Read the current `/learn` skill file and extract the `contentSha` from the metadata header
 2. Use WebFetch to call: `https://agentskill.sh/api/agent/skills/learn/version`
 3. Compare the local `contentSha` with the remote `contentSha`
@@ -547,6 +578,7 @@ Before executing any subcommand, check if this `/learn` skill itself is up to da
 Detect which agent platform is running to determine the correct skill install directory.
 
 **Detection order:**
+
 1. Check if `.openclaw/` directory exists OR `~/.openclaw/workspace/` exists → **OpenClaw**
    - Install path: `~/.openclaw/workspace/skills/<slug>.md`
 2. Check if `.claude/` directory exists in the project root → **Claude Code / Claude Desktop**
@@ -555,27 +587,27 @@ Detect which agent platform is running to determine the correct skill install di
    - Install path: `.cursor/skills/<slug>.md`
 4. Check if `.github/copilot/` directory exists → **GitHub Copilot**
    - Install path: `.github/copilot/skills/<slug>.md`
-4. Check if `.windsurf/` directory exists → **Windsurf**
+5. Check if `.windsurf/` directory exists → **Windsurf**
    - Install path: `.windsurf/skills/<slug>.md`
-5. Check if `.cline/` directory exists → **Cline**
+6. Check if `.cline/` directory exists → **Cline**
    - Install path: `.cline/skills/<slug>.md`
-6. Check if `.codex/` directory exists → **Codex**
+7. Check if `.codex/` directory exists → **Codex**
    - Install path: `.codex/skills/<slug>.md`
-7. Check if `.opencode/` directory exists → **OpenCode**
+8. Check if `.opencode/` directory exists → **OpenCode**
    - Install path: `.opencode/skills/<slug>.md`
-8. Check if `.aider/` directory exists → **Aider**
+9. Check if `.aider/` directory exists → **Aider**
    - Install path: `.aider/skills/<slug>.md`
-9. Check if `.gemini/` directory exists → **Gemini CLI**
-   - Install path: `.gemini/skills/<slug>.md`
-10. Check if `.amp/` directory exists → **Amp**
+10. Check if `.gemini/` directory exists → **Gemini CLI**
+    - Install path: `.gemini/skills/<slug>.md`
+11. Check if `.amp/` directory exists → **Amp**
     - Install path: `.amp/skills/<slug>.md`
-11. Check if `.goose/` directory exists → **Goose**
+12. Check if `.goose/` directory exists → **Goose**
     - Install path: `.goose/skills/<slug>.md`
-12. Check if `.roo-code/` directory exists → **Roo Code**
+13. Check if `.roo-code/` directory exists → **Roo Code**
     - Install path: `.roo-code/skills/<slug>.md`
-13. Check if `.trae/` directory exists → **Trae**
+14. Check if `.trae/` directory exists → **Trae**
     - Install path: `.trae/skills/<slug>.md`
-14. If none detected, ask the user which platform they are using.
+15. If none detected, ask the user which platform they are using.
 
 **Platform name mapping** (for API calls):
 | Directory | Platform value |
@@ -611,13 +643,13 @@ Rate a skill **immediately after completing a task** where the skill was used.
 
 Evaluate the skill based on these criteria and calculate a score from 1-5:
 
-| Score | Criteria |
-|-------|----------|
+| Score | Criteria                                                                                         |
+| ----- | ------------------------------------------------------------------------------------------------ |
 | **5** | Task completed perfectly. Skill instructions were clear, accurate, and comprehensive. No issues. |
-| **4** | Task completed successfully. Minor ambiguities or small improvements possible. |
-| **3** | Task completed with some friction. Instructions required interpretation or had gaps. |
-| **2** | Task partially completed. Significant issues with instructions, outdated info, or errors. |
-| **1** | Task failed or skill was misleading/broken. Instructions were wrong or harmful. |
+| **4** | Task completed successfully. Minor ambiguities or small improvements possible.                   |
+| **3** | Task completed with some friction. Instructions required interpretation or had gaps.             |
+| **2** | Task partially completed. Significant issues with instructions, outdated info, or errors.        |
+| **1** | Task failed or skill was misleading/broken. Instructions were wrong or harmful.                  |
 
 ### Auto-Rating Flow (Opt-Out with Notification)
 
@@ -670,6 +702,7 @@ Generate a short, specific comment explaining your rating:
 ### User Override
 
 If the user disagrees with your auto-rating, they can override it:
+
 - `/learn feedback <slug> <new-score> [comment]`
 
 The override will update the rating. Always respect user overrides.
@@ -685,6 +718,7 @@ In addition to auto-rating, **prompt the user for their rating** when:
 3. The user seems satisfied or frustrated with the result
 
 **Use AskUserQuestion** for the rating prompt:
+
 - Header: "Rate Skill"
 - Question: "How was **<skill name>**? Your feedback improves skill quality."
 - Options:
@@ -702,6 +736,7 @@ If user selects an option, submit their rating (this overrides any auto-rating).
 Track which skills from agentskill.sh are used during the conversation to ensure they get rated.
 
 **Mental tracking (no file needed):**
+
 - When a skill installed from agentskill.sh is invoked → mark as "used"
 - When a rating is submitted for that skill → mark as "rated"
 - At natural conversation breaks (task completion, topic change) → check for unrated skills
@@ -712,6 +747,7 @@ At the end of a task or when the conversation seems to be wrapping up, check if 
 
 1. **Auto-rate any unrated skills** using the rubric above
 2. **Notify the user** with a summary:
+
    ```
    ---
    **Session Skill Ratings:**
@@ -727,16 +763,16 @@ At the end of a task or when the conversation seems to be wrapping up, check if 
 
 ## Error Handling
 
-| Scenario | Response |
-|----------|----------|
+| Scenario                  | Response                                                                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | API unreachable / timeout | "Could not reach agentskill.sh. Check your connection or try again later. You can also browse skills at https://agentskill.sh" |
-| No search results | "No skills found for '<query>'. Try different keywords or browse at https://agentskill.sh" |
-| Skill not found (404) | "Skill '<slug>' not found. It may have been removed. Browse available skills at https://agentskill.sh" |
-| Rate limited (429) | "Too many requests. Please wait a moment and try again." |
-| Invalid score | "Score must be an integer between 1 and 5." |
-| Install write fails | "Failed to write skill file. Check that you have write permissions to <path>." |
-| Self-update fails | Continue silently with current version. Do not block the user. |
-| Security scan blocks | "Installation blocked due to critical security issues. See report above." |
+| No search results         | "No skills found for '<query>'. Try different keywords or browse at https://agentskill.sh"                                     |
+| Skill not found (404)     | "Skill '<slug>' not found. It may have been removed. Browse available skills at https://agentskill.sh"                         |
+| Rate limited (429)        | "Too many requests. Please wait a moment and try again."                                                                       |
+| Invalid score             | "Score must be an integer between 1 and 5."                                                                                    |
+| Install write fails       | "Failed to write skill file. Check that you have write permissions to <path>."                                                 |
+| Self-update fails         | Continue silently with current version. Do not block the user.                                                                 |
+| Security scan blocks      | "Installation blocked due to critical security issues. See report above."                                                      |
 
 ---
 
@@ -744,11 +780,11 @@ At the end of a task or when the conversation seems to be wrapping up, check if 
 
 All endpoints are on `https://agentskill.sh`.
 
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/api/agent/search?q=<query>&limit=5` | GET | Search skills |
-| `/api/agent/skills/<slug>/install` | GET | Get skill content for installation |
-| `/api/agent/skills/<slug>/version` | GET | Get content SHA for version check |
-| `/api/agent/skills/version?slugs=<csv>` | GET | Batch version check |
-| `/api/skills/<slug>/install` | POST | Track install event |
-| `/api/skills/<slug>/agent-feedback` | POST | Submit score and comment (include `autoRated: true` for agent ratings) |
+| Endpoint                                | Method | Purpose                                                                |
+| --------------------------------------- | ------ | ---------------------------------------------------------------------- |
+| `/api/agent/search?q=<query>&limit=5`   | GET    | Search skills                                                          |
+| `/api/agent/skills/<slug>/install`      | GET    | Get skill content for installation                                     |
+| `/api/agent/skills/<slug>/version`      | GET    | Get content SHA for version check                                      |
+| `/api/agent/skills/version?slugs=<csv>` | GET    | Batch version check                                                    |
+| `/api/skills/<slug>/install`            | POST   | Track install event                                                    |
+| `/api/skills/<slug>/agent-feedback`     | POST   | Submit score and comment (include `autoRated: true` for agent ratings) |
