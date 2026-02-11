@@ -121,6 +121,23 @@ Minimum = 0
 - `.env` — Environment files
 - `*.pem`, `*.key` — Private keys
 
+**Crypto wallet paths (targeted by AMOS stealer):**
+- `~/Library/Application Support/Exodus/`
+- `~/Library/Application Support/Atomic/`
+- `~/Library/Application Support/Electrum/`
+- `~/Library/Application Support/Binance/`
+- `~/Library/Application Support/Phantom/`
+- `~/.config/Ledger Live/`
+- `~/Library/Keychains/` — macOS keychain
+
+**Browser data paths (credential theft):**
+- `~/Library/Application Support/Google/Chrome/`
+- `~/Library/Application Support/Firefox/`
+- `~/Library/Safari/`
+- `~/Library/Application Support/BraveSoftware/`
+- `~/.config/google-chrome/`
+- `~/.mozilla/firefox/`
+
 ### Reverse Shells
 
 **What to detect:** Commands that open shell access to attackers.
@@ -171,6 +188,8 @@ Minimum = 0
 | Chained downloads | Script downloads another script which downloads payload |
 | Delayed execution | Install seems clean, malware activates later |
 | Legitimate package name-squatting | `python-requests` vs `requests` |
+| Misdirective URLs | Display shows legitimate URL, actual command hits attacker server |
+| Prerequisites section | "Install this first" directing to malicious downloads (ClawHavoc pattern) |
 
 ### Credential Theft
 
@@ -278,6 +297,8 @@ Minimum = 0
 | HTTP (not HTTPS) for sensitive data | Unencrypted transmission |
 | raw.githubusercontent.com | Check account age (<1 week = suspicious) |
 | Direct binary downloads (.exe, .zip, .dmg) | Malware delivery |
+| Code snippet hosts (glot.io, pastebin.com, paste.ee, hastebin.com, ghostbin.com) | Payload staging (ClawHavoc vector) |
+| Webhook services (webhook.site, requestbin.com) | Data exfiltration endpoints |
 
 **URL validation steps:**
 1. Expand any shortened URLs
