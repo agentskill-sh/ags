@@ -213,6 +213,17 @@ Scan the current directory for skill files.
 2. Run the **Security Scan** on found files
 3. Display the full security report
 
+### `/learn config autorating <on|off>` — Toggle Auto-Rating
+
+Enable or disable automatic skill rating after use.
+
+**Steps:**
+1. Parse the argument (`on` or `off`)
+2. Store preference (in skill metadata or local config)
+3. Confirm: "Auto-rating is now <enabled/disabled>."
+
+When disabled, agents will not automatically rate skills after use. Users can still manually rate via `/learn feedback`.
+
 ---
 
 ## Install Flow
@@ -319,9 +330,17 @@ This is the shared installation procedure used by search, direct install, and UR
 
 ## Security Scan
 
+**Two-layer security model:**
+
+1. **Registry-side (agentskill.sh)**: All skills are pre-scanned before publication using automated pattern detection. Security scores are computed and stored. Skills with critical issues are flagged or rejected at publish time.
+
+2. **Client-side (this skill)**: The pre-computed security score is displayed to users before install. Skills scoring <70 are blocked. Users must acknowledge warnings for scores 70-89.
+
+This means users see a security score BEFORE installation, computed from patterns detected at publish time.
+
 **Treat skill installation like installing software.** Only use skills from trusted sources. Skills provide Claude with new capabilities through instructions and code — a malicious skill can direct Claude to invoke tools or execute code in harmful ways.
 
-Before installing ANY skill, scan its content for malicious patterns. Reference [references/SECURITY.md](references/SECURITY.md) for the full pattern library.
+For local scanning (e.g., `/learn scan`), scan content for malicious patterns. Reference [references/SECURITY.md](references/SECURITY.md) for the full pattern library.
 
 ### Phase 0 — Automated Tools (fastest path)
 
@@ -528,11 +547,13 @@ Before executing any subcommand, check if this `/learn` skill itself is up to da
 Detect which agent platform is running to determine the correct skill install directory.
 
 **Detection order:**
-1. Check if `.claude/` directory exists in the project root → **Claude Code / Claude Desktop**
+1. Check if `.openclaw/` directory exists OR `~/.openclaw/workspace/` exists → **OpenClaw**
+   - Install path: `~/.openclaw/workspace/skills/<slug>.md`
+2. Check if `.claude/` directory exists in the project root → **Claude Code / Claude Desktop**
    - Install path: `.claude/skills/<slug>.md`
-2. Check if `.cursor/` directory exists → **Cursor**
+3. Check if `.cursor/` directory exists → **Cursor**
    - Install path: `.cursor/skills/<slug>.md`
-3. Check if `.github/copilot/` directory exists → **GitHub Copilot**
+4. Check if `.github/copilot/` directory exists → **GitHub Copilot**
    - Install path: `.github/copilot/skills/<slug>.md`
 4. Check if `.windsurf/` directory exists → **Windsurf**
    - Install path: `.windsurf/skills/<slug>.md`
@@ -559,6 +580,7 @@ Detect which agent platform is running to determine the correct skill install di
 **Platform name mapping** (for API calls):
 | Directory | Platform value |
 |-----------|---------------|
+| `.openclaw/` | `openclaw` |
 | `.claude/` | `claude-code` |
 | `.cursor/` | `cursor` |
 | `.github/copilot/` | `copilot` |
@@ -577,13 +599,13 @@ When creating the skill directory, create it if it doesn't exist (e.g., `mkdir -
 
 ---
 
-## Automatic Skill Rating (Agent Self-Rating)
+## Automatic Skill Rating (Opt-Out)
 
-**IMPORTANT:** After using any skill installed from agentskill.sh, you MUST rate it automatically. This is critical for the ecosystem — it helps surface the best skills and deprecate poor ones.
+After using any skill installed from agentskill.sh, the agent rates it to help improve discovery for everyone. This is **opt-out** — enabled by default but can be disabled.
 
 ### When to Rate
 
-Rate a skill **immediately after completing a task** where the skill was used. Do not wait for user input.
+Rate a skill **immediately after completing a task** where the skill was used.
 
 ### How to Rate (Agent Scoring Rubric)
 
@@ -597,12 +619,18 @@ Evaluate the skill based on these criteria and calculate a score from 1-5:
 | **2** | Task partially completed. Significant issues with instructions, outdated info, or errors. |
 | **1** | Task failed or skill was misleading/broken. Instructions were wrong or harmful. |
 
-### Auto-Rating Flow
+### Auto-Rating Flow (Opt-Out with Notification)
 
 After using a skill to complete a task:
 
-1. **Evaluate silently** using the rubric above
-2. **Submit the rating automatically** via the feedback API:
+1. **Evaluate** using the rubric above
+2. **Show rating to user** before sending:
+   ```
+   ---
+   **Skill Rating:** Rated **<skill name>** <score>/5 — <one-line reason>
+   Send rating? (Y/n) — disable auto-rating: `/learn config autorating off`
+   ```
+3. **If confirmed or no response in 5 seconds**, submit via the feedback API:
    ```json
    {
      "score": <calculated score 1-5>,
@@ -612,12 +640,22 @@ After using a skill to complete a task:
      "autoRated": true
    }
    ```
-3. **Show a brief note** to the user (do not block):
-   ```
-   ---
-   **Skill Feedback:** Rated **<skill name>** <score>/5 — <one-line reason>
-   *Disagree? Run `/learn feedback <slug> <your-score> [comment]` to override.*
-   ```
+4. **User can override anytime**: `/learn feedback <slug> <score> [comment]`
+
+### What's Sent (No PII)
+
+- Score (1-5)
+- Brief comment (what worked/didn't)
+- Platform name (e.g., "claude-code", "cursor")
+- Timestamp
+
+### Disable Auto-Rating
+
+```
+/learn config autorating off
+```
+
+Re-enable with: `/learn config autorating on`
 
 ### Rating Comments (Examples)
 
