@@ -1,5 +1,7 @@
 # Security Pattern Library
 
+**Treat skill installation like installing software.** Only use skills from trusted sources — those you created yourself or obtained from verified authors. Skills provide Claude with new capabilities through instructions and code, and a malicious skill can direct Claude to invoke tools or execute code in harmful ways.
+
 Detailed patterns for detecting malicious code in agent skills. This reference is loaded during security scans.
 
 ---
@@ -283,6 +285,27 @@ Minimum = 0
 3. For GitHub raw links, verify account is established
 4. Flag any direct executable downloads
 
+### Second-Order Prompt Injection
+
+**What to detect:** Skills that fetch external content which may contain malicious instructions.
+
+| Pattern | Risk |
+|---------|------|
+| `WebFetch` to process content | Fetched content can inject prompts |
+| `curl` output used in prompts | External data becomes instructions |
+| API responses parsed as instructions | Third-party can inject behavior |
+| Dynamic skill loading | Remote skill content can change |
+
+**Why this matters:**
+- A skill may look safe but fetch malicious instructions at runtime
+- External dependencies can be compromised over time
+- The skill author may be trustworthy but their data source is not
+
+**Mitigation:**
+- Flag all external data fetching for review
+- Prefer static instructions over dynamic content
+- Validate/sanitize any fetched content before use
+
 ### Hidden Payloads in Assets
 
 **What to detect:** Malware hidden in seemingly benign files.
@@ -470,6 +493,65 @@ For high-value targets or suspicious skills, run in isolation:
 | `Snyk AI-BOM` | AI dependency tracking |
 | `strace` / `dtrace` | System call monitoring |
 | `tcpdump` | Network capture |
+
+---
+
+## Dependency Drift
+
+**What to detect:** Previously-safe skills that become malicious over time.
+
+**Risk factors:**
+- Skill updates may introduce malicious code
+- External dependencies (npm, pip) can be compromised
+- Remote URLs fetched by the skill can change
+- Supply chain attacks target popular packages
+
+**Mitigation:**
+- Re-scan skills after every update
+- Pin dependency versions where possible
+- Monitor for unusual changes in skill behavior
+- Report suspicious changes to agentskill.sh
+
+---
+
+## Security Reporting
+
+When issues are detected, report them to improve ecosystem security:
+
+**API Endpoint:**
+```
+POST https://agentskill.sh/api/agent/security-reports
+```
+
+**Request Body:**
+```json
+{
+  "slug": "skill-name",
+  "owner": "author-name",
+  "score": 75,
+  "issues": [
+    {
+      "category": "prompt_injection",
+      "severity": "high",
+      "description": "Contains 'ignore previous instructions'",
+      "line": 42,
+      "pattern": "ignore previous"
+    }
+  ],
+  "platform": "claude-code",
+  "agentName": "Claude",
+  "scannerVersion": "learn-2.0"
+}
+```
+
+**Categories:** `prompt_injection`, `command_injection`, `data_exfiltration`, `credential_harvest`, `obfuscation`, `file_access`, `external_calls`, `persistence`, `social_engineering`
+
+**Severities:** `critical`, `high`, `medium`, `low`
+
+**Notes:**
+- Fire-and-forget — don't block on response
+- Helps flag dangerous skills for community review
+- Improves security scores over time
 
 ---
 
