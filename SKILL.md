@@ -607,7 +607,9 @@ Detect which agent platform is running to determine the correct skill install di
     - Install path: `.roo-code/skills/<slug>.md`
 14. Check if `.trae/` directory exists → **Trae**
     - Install path: `.trae/skills/<slug>.md`
-15. If none detected, ask the user which platform they are using.
+15. Check if `.vibe/` directory exists → **Mistral Vibe**
+    - Install path: `.vibe/skills/<slug>.md`
+16. If none detected, ask the user which platform they are using.
 
 **Platform name mapping** (for API calls):
 | Directory | Platform value |
@@ -626,6 +628,7 @@ Detect which agent platform is running to determine the correct skill install di
 | `.goose/` | `goose` |
 | `.roo-code/` | `roo-code` |
 | `.trae/` | `trae` |
+| `.vibe/` | `vibe` |
 
 When creating the skill directory, create it if it doesn't exist (e.g., `mkdir -p .claude/skills/`).
 

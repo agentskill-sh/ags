@@ -143,6 +143,7 @@ Every installed skill includes a metadata header:
 | OpenAI Codex | `~/.codex/skills/learn/` |
 | Windsurf | `~/.windsurf/skills/learn/` |
 | Gemini CLI | `~/.gemini/skills/learn/` |
+| Mistral Vibe | `~/.vibe/skills/learn/` |
 | Manus | Import via Settings → Skills |
 
 [Full platform list →](https://agentskill.sh/install)
