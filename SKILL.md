@@ -73,8 +73,8 @@ When the argument starts with `@`, treat it as a direct install request.
 
 **Steps:**
 
-1. Parse the owner and slug from the argument (split on `/`)
-2. Use WebFetch to call: `https://agentskill.sh/api/agent/skills/<slug>/install?owner=<owner>`
+1. Parse the owner and slug from the argument (split on `/`, strip the `@` prefix)
+2. Use WebFetch to call: `https://agentskill.sh/api/agent/skills/<owner>/<slug>/install`
 3. If found, show the skill preview and proceed to **Install Flow**
 4. If not found, say: "Skill @<owner>/<slug> not found. Check the name at https://agentskill.sh"
 
@@ -84,9 +84,106 @@ When the argument starts with `http`, treat it as a URL install.
 
 **Steps:**
 
-1. Parse the slug from the URL path (last segment of `https://agentskill.sh/<slug>`)
-2. Use WebFetch to call: `https://agentskill.sh/api/agent/skills/<slug>/install`
-3. Proceed to **Install Flow**
+1. Parse the URL path to determine what to install:
+   - `https://agentskill.sh/skillsets/<slug>` → treat as skillset install (see **Skillset Install** below)
+   - `https://agentskill.sh/@<owner>` (no skill slug after owner) → treat as owner install (see **Owner Install** below)
+   - `https://agentskill.sh/@<owner>/<slug>` → single skill install with owner
+   - `https://agentskill.sh/<slug>` → single skill install without owner
+2. For single skill: Use WebFetch to call `https://agentskill.sh/api/agent/skills/<owner>/<slug>/install` (if owner known) or `https://agentskill.sh/api/agent/skills/<slug>/install`
+3. Proceed to the appropriate **Install Flow**
+
+### `/learn skillset:<slug>` — Install a Skillset
+
+When the argument starts with `skillset:`, install all skills from a curated skillset.
+
+**Steps:**
+
+1. Parse the skillset slug from the argument (after `skillset:`)
+2. Use WebFetch to call: `https://agentskill.sh/api/agent/skillsets/<slug>/install`
+3. The response contains a `skills` array with all skill data
+4. Show the skillset preview:
+
+   ```
+   ## Skillset: <name>
+
+   **Skills:** <skillCount> skills
+   **Version:** v<version>
+
+   <description>
+
+   | # | Skill | Owner | Security |
+   |---|-------|-------|----------|
+   | 1 | **<name>** | @<owner> | <securityScore>/100 |
+   ...
+   ```
+
+5. **Use AskUserQuestion** for install confirmation:
+   - Header: "Install Skillset"
+   - Question: "Install all <skillCount> skills from skillset \"<name>\"?"
+   - Options: "Yes, install all" / "No, cancel"
+
+6. If confirmed, for each skill in the response:
+   a. Run the **Security Scan** on the skill content
+   b. If score >= 70, write SKILL.md and skillFiles to the platform's skill directory
+   c. If score < 70, skip that skill and warn the user
+   d. Track install: POST to `https://agentskill.sh/api/skills/<slug>/install`
+
+7. Show summary after all installs:
+
+   ```
+   ## Skillset Installed: <name>
+
+   **Installed:** <count>/<total> skills
+   <list of installed skills with paths>
+
+   Rate skills after use: `/learn feedback <slug> <1-5>`
+   ```
+
+### `/learn owner:<owner>` — Install All Skills from an Owner
+
+When the argument starts with `owner:`, install all skills from a GitHub owner.
+
+**Steps:**
+
+1. Parse the owner name from the argument (after `owner:`)
+2. Use WebFetch to call: `https://agentskill.sh/api/agent/owners/<owner>/install`
+   - Optional: add `?repo=<repo-name>` to filter by specific repository
+3. The response contains a `skills` array with all skill data
+4. Show the preview:
+
+   ```
+   ## Skills by <owner>
+
+   **Skills:** <skillCount> skills
+
+   | # | Skill | Repo | Security |
+   |---|-------|------|----------|
+   | 1 | **<name>** | <repo> | <securityScore>/100 |
+   ...
+   ```
+
+5. **Use AskUserQuestion** for install confirmation:
+   - Header: "Install All"
+   - Question: "Install all <skillCount> skills from @<owner>?"
+   - Options: "Yes, install all" / "No, cancel"
+
+6. If confirmed, for each skill in the response:
+   a. Run the **Security Scan** on the skill content
+   b. If score >= 70, write SKILL.md and skillFiles to the platform's skill directory
+   c. If score < 70, skip that skill and warn the user
+   d. Track install: POST to `https://agentskill.sh/api/skills/<slug>/install`
+
+7. Show summary (same format as skillset install)
+
+### `/learn owner:<owner>/<repo>` — Install All Skills from a Repo
+
+When the argument contains `owner:<owner>/<repo>`, install all skills from a specific GitHub repository.
+
+**Steps:**
+
+1. Parse the owner and repo from the argument
+2. Use WebFetch to call: `https://agentskill.sh/api/agent/owners/<owner>/install?repo=<repo>`
+3. Follow the same flow as **Owner Install** above
 
 ### `/learn skillset:<slug>` — Install a Skillset
 
@@ -360,7 +457,9 @@ This is the shared installation procedure used by search, direct install, and UR
 
 **Steps:**
 
-1. Fetch skill content from `https://agentskill.sh/api/agent/skills/<slug>/install?platform=<platform>` if not already fetched
+1. Fetch skill content if not already fetched:
+   - If owner is known: `https://agentskill.sh/api/agent/skills/<owner>/<slug>/install?platform=<platform>`
+   - If no owner (search result): `https://agentskill.sh/api/agent/skills/<slug>/install?platform=<platform>`
 
 2. **Run Security Scan** on the fetched content (see **Security Scan** section below)
 
@@ -893,11 +992,14 @@ All endpoints are on `https://agentskill.sh`.
 | Endpoint                                          | Method | Purpose                                                                |
 | ------------------------------------------------- | ------ | ---------------------------------------------------------------------- |
 | `/api/agent/search?q=<query>&limit=5`              | GET    | Search skills                                                          |
-| `/api/agent/skills/<slug>/install`                 | GET    | Get skill content for installation                                     |
-| `/api/agent/skills/<slug>/version`                 | GET    | Get content SHA for version check                                      |
-| `/api/agent/skills/version?slugs=<csv>`            | GET    | Batch version check                                                    |
-| `/api/agent/skillsets/<slug>/install`              | GET    | Get all skills in a skillset for bulk installation                     |
-| `/api/agent/owners/<owner>/install`                | GET    | Get all skills by an author for bulk installation                      |
-| `/api/skills/<slug>/install`                       | POST   | Track install event                                                    |
-| `/api/skillsets/<slug>/install`                     | POST   | Track skillset install event                                           |
-| `/api/skills/<slug>/agent-feedback`                | POST   | Submit score and comment (include `autoRated: true` for agent ratings) |
+| `/api/agent/skills/<owner>/<slug>/install`          | GET    | Get skill content for installation (preferred, avoids ambiguity)       |
+| `/api/agent/skills/<slug>/install`                  | GET    | Get skill content (works if slug is unique across all owners)          |
+| `/api/agent/skills/<owner>/<slug>/version`          | GET    | Get content SHA for version check (preferred)                          |
+| `/api/agent/skills/<slug>/version`                  | GET    | Get content SHA (works if slug is unique)                              |
+| `/api/agent/skills/version?slugs=<csv>`             | GET    | Batch version check                                                    |
+| `/api/agent/skillsets/<slug>/install`               | GET    | Get all skills in a skillset for bulk installation                     |
+| `/api/agent/owners/<owner>/install`                 | GET    | Get all skills by an author for bulk installation                      |
+| `/api/agent/owners/<owner>/install?repo=<repo>`     | GET    | Get all skill contents for a specific repo                             |
+| `/api/skills/<slug>/install`                        | POST   | Track install event                                                    |
+| `/api/skillsets/<slug>/install`                      | POST   | Track skillset install event                                           |
+| `/api/skills/<slug>/agent-feedback`                 | POST   | Submit score and comment (include `autoRated: true` for agent ratings) |
