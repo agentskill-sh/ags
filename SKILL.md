@@ -3,7 +3,7 @@ name: learn
 description: Discover, install, and manage AI agent skills from agentskill.sh. Search for capabilities, install mid-session, scan for security issues, and provide feedback. Use when asked to find skills, install extensions, or check skill safety.
 metadata:
   author: agentskill-sh
-  version: "2.0"
+  version: "2.1"
 ---
 
 # Learn — Find & Install Agent Skills
@@ -87,6 +87,113 @@ When the argument starts with `http`, treat it as a URL install.
 1. Parse the slug from the URL path (last segment of `https://agentskill.sh/<slug>`)
 2. Use WebFetch to call: `https://agentskill.sh/api/agent/skills/<slug>/install`
 3. Proceed to **Install Flow**
+
+### `/learn skillset:<slug>` — Install a Skillset
+
+When the argument starts with `skillset:`, install all skills from a curated skillset (a bundle of skills).
+
+**Steps:**
+
+1. Parse the slug from the argument (everything after `skillset:`)
+2. Use WebFetch to call: `https://agentskill.sh/api/agent/skillsets/<slug>/install?platform=<platform>`
+3. Parse the JSON response. It contains:
+   - `name`, `description`, `version` for the skillset
+   - `skills` array where each entry has `slug`, `name`, `owner`, `skillMd`, `skillFiles`, `installPath`, `securityScore`
+4. Display the skillset overview:
+
+   ```
+   ## Skillset: <name>
+
+   **Version:** <version>
+   **Skills:** <skillCount> skills
+
+   <description>
+
+   | # | Skill | Author | Security |
+   |---|-------|--------|----------|
+   | 1 | **<name>** | @<owner> | <securityScore>/100 |
+   ...
+   ```
+
+5. Check security scores. If any skill scores < 70, warn the user and list the dangerous skills. Do not install those.
+6. **Use AskUserQuestion** for confirmation:
+   - Header: "Install Skillset"
+   - Question: "Install all <count> skills from **<name>**?"
+   - Options:
+     - "Yes, install all" (description: "<count> skills will be installed")
+     - "No, cancel" (description: "Go back")
+7. If confirmed, for each skill in the `skills` array:
+   - Write the `skillMd` content to `installPath` (the API already includes the metadata header)
+   - Write each file from `skillFiles` to the same directory as SKILL.md
+   - Create directories as needed (`mkdir -p`)
+8. Track the install by POSTing to `https://agentskill.sh/api/skillsets/<slug>/install`
+9. Show summary:
+
+   ```
+   ## Installed Skillset: <name>
+
+   Successfully installed **<count>** skills:
+
+   | Skill | Location |
+   |-------|----------|
+   | **<name>** | `<installPath>` |
+   ...
+
+   Rate individual skills: `/learn feedback <slug> <1-5> [comment]`
+   ```
+
+If the skillset is not found (404), say: "Skillset '<slug>' not found. Browse skillsets at https://agentskill.sh/skillsets"
+
+### `/learn owner:<owner>` — Install All Skills from an Author
+
+When the argument starts with `owner:`, install all skills published by a specific author.
+
+**Steps:**
+
+1. Parse the owner name from the argument (everything after `owner:`)
+2. Use WebFetch to call: `https://agentskill.sh/api/agent/owners/<owner>/install?platform=<platform>`
+3. Parse the JSON response. It contains:
+   - `owner`, `skillCount`
+   - `skills` array where each entry has `slug`, `name`, `owner`, `skillMd`, `skillFiles`, `installPath`, `securityScore`
+4. Display the skills overview:
+
+   ```
+   ## Skills by @<owner>
+
+   **Total:** <skillCount> skills
+
+   | # | Skill | Security |
+   |---|-------|----------|
+   | 1 | **<name>** | <securityScore>/100 |
+   ...
+   ```
+
+5. Check security scores. If any skill scores < 70, warn and exclude those from installation.
+6. **Use AskUserQuestion** for confirmation:
+   - Header: "Install All"
+   - Question: "Install all <count> skills from @<owner>?"
+   - Options:
+     - "Yes, install all" (description: "<count> skills will be installed")
+     - "No, cancel" (description: "Go back")
+7. If confirmed, for each skill in the `skills` array:
+   - Write the `skillMd` content to `installPath` (the API already includes the metadata header)
+   - Write each file from `skillFiles` to the same directory as SKILL.md
+   - Create directories as needed (`mkdir -p`)
+8. Track installs by POSTing to `https://agentskill.sh/api/skills/<slug>/install` for each skill
+9. Show summary:
+
+   ```
+   ## Installed <count> skills from @<owner>
+
+   | Skill | Location |
+   |-------|----------|
+   | **<name>** | `<installPath>` |
+   ...
+
+   Rate individual skills: `/learn feedback <slug> <1-5> [comment]`
+   ```
+
+If no skills found for the owner (404), say: "No skills found for @<owner>. Check the name at https://agentskill.sh"
 
 ### `/learn` (no arguments) — Context-Aware Recommendations
 
@@ -249,7 +356,7 @@ When disabled, agents will not automatically rate skills after use. Users can st
 
 ## Install Flow
 
-This is the shared installation procedure used by search, direct install, and URL install.
+This is the shared installation procedure used by search, direct install, and URL install. For bulk installs (skillsets and owner installs), each skill in the response follows this same flow but the API pre-includes the metadata header in `skillMd`.
 
 **Steps:**
 
@@ -783,11 +890,14 @@ At the end of a task or when the conversation seems to be wrapping up, check if 
 
 All endpoints are on `https://agentskill.sh`.
 
-| Endpoint                                | Method | Purpose                                                                |
-| --------------------------------------- | ------ | ---------------------------------------------------------------------- |
-| `/api/agent/search?q=<query>&limit=5`   | GET    | Search skills                                                          |
-| `/api/agent/skills/<slug>/install`      | GET    | Get skill content for installation                                     |
-| `/api/agent/skills/<slug>/version`      | GET    | Get content SHA for version check                                      |
-| `/api/agent/skills/version?slugs=<csv>` | GET    | Batch version check                                                    |
-| `/api/skills/<slug>/install`            | POST   | Track install event                                                    |
-| `/api/skills/<slug>/agent-feedback`     | POST   | Submit score and comment (include `autoRated: true` for agent ratings) |
+| Endpoint                                          | Method | Purpose                                                                |
+| ------------------------------------------------- | ------ | ---------------------------------------------------------------------- |
+| `/api/agent/search?q=<query>&limit=5`              | GET    | Search skills                                                          |
+| `/api/agent/skills/<slug>/install`                 | GET    | Get skill content for installation                                     |
+| `/api/agent/skills/<slug>/version`                 | GET    | Get content SHA for version check                                      |
+| `/api/agent/skills/version?slugs=<csv>`            | GET    | Batch version check                                                    |
+| `/api/agent/skillsets/<slug>/install`              | GET    | Get all skills in a skillset for bulk installation                     |
+| `/api/agent/owners/<owner>/install`                | GET    | Get all skills by an author for bulk installation                      |
+| `/api/skills/<slug>/install`                       | POST   | Track install event                                                    |
+| `/api/skillsets/<slug>/install`                     | POST   | Track skillset install event                                           |
+| `/api/skills/<slug>/agent-feedback`                | POST   | Submit score and comment (include `autoRated: true` for agent ratings) |
