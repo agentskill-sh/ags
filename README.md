@@ -80,7 +80,7 @@ This repo contains the official CLI and skills for [agentskill.sh](https://agent
 |------|-------------|
 | **`ags` CLI** | Terminal tool to search, install, list, update, remove, and rate skills. Published to npm as [`ags`](https://www.npmjs.com/package/ags). |
 | **`/learn` skill** | Agent skill that gives your AI the same capabilities mid-conversation. Uses the CLI under the hood. |
-| **`skill-reviewer` skill** | Reviews SKILL.md files against best practices and scores them on 10 quality dimensions. |
+| **`review-skill` skill** | Reviews SKILL.md files against best practices and scores them on 10 quality dimensions. |
 
 ---
 
@@ -206,7 +206,7 @@ The `/learn` skill includes a [security pattern library](skills/learn/references
 │   │   ├── SKILL.md
 │   │   └── references/
 │   │       └── SECURITY.md
-│   └── skill-reviewer/       # Skill quality reviewer
+│   └── review-skill/       # Skill quality reviewer
 │       ├── SKILL.md
 │       └── references/
 │           └── rubric.md

@@ -1,5 +1,5 @@
 ---
-name: skill-reviewer
+name: review-skill
 description: >
   Review and improve AI agent skills (SKILL.md files) against best practices
   from the Agent Skills specification and Anthropic's authoring guidelines.
