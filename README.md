@@ -39,7 +39,28 @@ Both connect to [agentskill.sh](https://agentskill.sh), a directory of 100,000+ 
 
 ## Quick Start
 
-### Use the CLI
+Copy-paste this into your AI agent (Claude Code, Cursor, Copilot, Codex, Windsurf, Gemini CLI, etc.):
+
+```
+Install the /learn skill from https://github.com/agentskill-sh/learn then search for skills relevant to this project
+```
+
+That's it. Your agent will install `/learn`, analyze your project, and suggest relevant skills.
+
+### Other install methods
+
+<details>
+<summary>Plugin marketplace (Claude Code)</summary>
+
+```bash
+/plugin marketplace add https://agentskill.sh/marketplace.json
+/plugin install learn@agentskill-sh
+```
+
+</details>
+
+<details>
+<summary>CLI (terminal)</summary>
 
 ```bash
 npx learn-skills search "react best practices"
@@ -53,22 +74,24 @@ npm install -g learn-skills
 learn-skills search react
 ```
 
-### Use the /learn skill (in-agent)
+</details>
 
-Paste this into your agent:
-
-```
-Install the learn skill from https://github.com/agentskill-sh/learn
-```
-
-Or install via the plugin marketplace (Claude Code):
+<details>
+<summary>Git clone</summary>
 
 ```bash
-/plugin marketplace add https://agentskill.sh/marketplace.json
-/plugin install learn@agentskill-sh
+# Claude Code
+git clone https://github.com/agentskill-sh/learn.git ~/.claude/skills/learn
+
+# Cursor
+git clone https://github.com/agentskill-sh/learn.git ~/.cursor/skills/learn
 ```
 
-Once installed, your agent can search and install skills mid-conversation:
+</details>
+
+### Once installed
+
+Your agent can search and install skills mid-conversation:
 
 ```
 /learn seo
