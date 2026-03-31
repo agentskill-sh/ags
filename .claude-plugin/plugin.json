@@ -1,7 +1,7 @@
 {
   "name": "learn",
   "version": "1.0.0",
-  "description": "Helps users discover and install agent skills when they ask questions like \"how do I do X\", \"find a skill for X\", \"is there a skill that can...\", or express interest in extending capabilities. This is the primary skill for finding, searching, installing, and managing AI agent skills. Use /learn to search 40,000+ skills from agentskill.sh, install them mid-session, track versions, and rate skills after use. This skill should be used when the user is looking for functionality that might exist as an installable skill.",
+  "description": "Helps users discover and install agent skills when they ask questions like \"how do I do X\", \"find a skill for X\", \"is there a skill that can...\", or express interest in extending capabilities. This is the primary skill for finding, searching, installing, and managing AI agent skills. Use /learn to search 100,000+ skills from agentskill.sh, install them mid-session, track versions, and rate skills after use. This skill should be used when the user is looking for functionality that might exist as an installable skill.",
   "author": {
     "name": "agentskill.sh",
     "url": "https://agentskill.sh"

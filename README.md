@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://agentskill.sh/agentskill-og.jpg" alt="agentskill.sh" width="100%">
+  <img src="assets/banner.jpg" alt="/learn Kung Fu" width="100%">
 </p>
 
 <h1 align="center">learn-skills</h1>
@@ -33,7 +33,7 @@ This repo contains two things:
 | **`learn-skills` CLI** | Terminal tool to search, install, list, update, remove, and rate skills. Published to npm as [`learn-skills`](https://www.npmjs.com/package/learn-skills). |
 | **`/learn` skill** | An agent skill (SKILL.md) that gives your AI agent the same capabilities mid-conversation. It uses the CLI under the hood. |
 
-Both connect to [agentskill.sh](https://agentskill.sh), a directory of 44,000+ skills for Claude Code, Cursor, Copilot, Codex, Windsurf, Gemini CLI, and 10+ other platforms.
+Both connect to [agentskill.sh](https://agentskill.sh), a directory of 100,000+ skills for Claude Code, Cursor, Copilot, Codex, Windsurf, Gemini CLI, and 10+ other platforms.
 
 ---
 
@@ -81,7 +81,7 @@ Once installed, your agent can search and install skills mid-conversation:
 ## CLI Commands
 
 ```bash
-learn-skills search <query>              # Search 44,000+ skills
+learn-skills search <query>              # Search 100,000+ skills
 learn-skills install <slug>              # Install a skill
 learn-skills install @owner/skill-name   # Install from specific author
 learn-skills list                        # Show installed skills
@@ -227,7 +227,7 @@ For creating and publishing your own skills, see the [skill creation guide](http
 
 ## Learn More
 
-- [Browse 44,000+ skills](https://agentskill.sh)
+- [Browse 100,000+ skills](https://agentskill.sh)
 - [What is an Agent Skill?](https://agentskill.sh/readme)
 - [Create your own skill](https://agentskill.sh/readme#how-to-create-a-skill)
 - [Installation guide](https://agentskill.sh/install)
