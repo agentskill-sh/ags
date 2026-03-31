@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/ags-banner.jpg" alt="ags = Agent Skills" width="100%">
+  <img src="https://raw.githubusercontent.com/agentskill-sh/learn/main/assets/ags-banner.jpg" alt="ags = Agent Skills" width="100%">
 </p>
 
 <p align="center">
@@ -63,7 +63,7 @@ git clone https://github.com/agentskill-sh/ags.git ~/.cursor/skills/ags
 ---
 
 <p align="center">
-  <img src="assets/banner.jpg" alt="/learn Kung Fu" width="100%">
+  <img src="https://raw.githubusercontent.com/agentskill-sh/learn/main/assets/banner.jpg" alt="/learn Kung Fu" width="100%">
 </p>
 
 ## Why /learn and agentskill.sh?
