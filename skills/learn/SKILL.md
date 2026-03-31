@@ -19,9 +19,9 @@ includes:
 
 # Learn — Find & Install Agent Skills
 
-Search 100,000+ skills from [agentskill.sh](https://agentskill.sh). Delegates all operations to the `ags` CLI via `npx ags`. The CLI is auto-downloaded by npx on first use.
+Search 100,000+ skills from [agentskill.sh](https://agentskill.sh). Delegates all operations to the `ags` CLI via `npx @agentskill.sh/cli`. The CLI is auto-downloaded by npx on first use.
 
-All commands below use `npx ags` with `--json` for structured output.
+All commands below use `npx @agentskill.sh/cli` with `--json` for structured output.
 
 ---
 
@@ -52,7 +52,7 @@ This skill registers a single command, `/learn`, with subcommands for all operat
 When the user runs `/learn` followed by a search query, search for matching skills.
 
 **Steps:**
-1. Run via Bash: `npx ags search "<query>" --json --limit 5`
+1. Run via Bash: `npx @agentskill.sh/cli search "<query>" --json --limit 5`
 2. Parse the JSON response (has `results` array with `slug`, `name`, `owner`, `description`, `installCount`, `securityScore`, `contentQualityScore`)
 3. Display results using a **clean markdown table** format:
    ```
@@ -80,7 +80,7 @@ If no results are found, say: "No skills found for '<query>'. Try different keyw
 When the argument starts with `@`, treat it as a direct install request.
 
 **Steps:**
-1. Run via Bash: `npx ags install @<owner>/<slug> --json`
+1. Run via Bash: `npx @agentskill.sh/cli install @<owner>/<slug> --json`
 2. If successful, show the post-install summary (see **Install Flow** step 4)
 3. If it fails, say: "Skill @<owner>/<slug> not found. Check the name at https://agentskill.sh"
 
@@ -106,7 +106,7 @@ When the argument starts with `skillset:`, treat it as a skillset install reques
    ...
    ```
 5. **Confirm installation** (see **Platform Interaction**)
-6. If confirmed, install each skill: `npx ags install <slug> --json` for each
+6. If confirmed, install each skill: `npx @agentskill.sh/cli install <slug> --json` for each
 7. Show post-install summary
 
 ### `/learn <url>` — Install from URL
@@ -128,7 +128,7 @@ When `/learn` is run with no arguments, analyze the current project and recommen
    - Check for config files: `tailwind.config`, `docker-compose.yml`, `prisma/schema.prisma`
    - Read the current git branch name via Bash: `git branch --show-current`
 2. Build a search query from detected context (e.g., "nextjs prisma", "stripe payments")
-3. Run: `npx ags search "<constructed query>" --json --limit 5`
+3. Run: `npx @agentskill.sh/cli search "<constructed query>" --json --limit 5`
 4. Present results with a context header:
    ```
    ## Recommended for Your Project
@@ -147,7 +147,7 @@ When `/learn` is run with no arguments, analyze the current project and recommen
 ### `/learn feedback <slug> <score> [comment]` — Rate a Skill
 
 **Steps:**
-1. Run via Bash: `npx ags feedback <slug> <score> <comment if provided>`
+1. Run via Bash: `npx @agentskill.sh/cli feedback <slug> <score> <comment if provided>`
 2. Confirm to the user:
    ```
    ## Feedback Submitted
@@ -161,7 +161,7 @@ When `/learn` is run with no arguments, analyze the current project and recommen
 ### `/learn list` — Show Installed Skills
 
 **Steps:**
-1. Run via Bash: `npx ags list --json`
+1. Run via Bash: `npx @agentskill.sh/cli list --json`
 2. Parse the JSON response (has `skills` array with `slug`, `owner`, `contentSha`, `installed`, `dir`)
 3. Display using a **clean table format**:
    ```
@@ -178,7 +178,7 @@ When `/learn` is run with no arguments, analyze the current project and recommen
 ### `/learn update` — Check for Updates
 
 **Steps:**
-1. Run via Bash: `npx ags update --json`
+1. Run via Bash: `npx @agentskill.sh/cli update --json`
 2. Parse the JSON response (`updated` array and `upToDate` count)
 3. If updates were applied:
    ```
@@ -200,7 +200,7 @@ When `/learn` is run with no arguments, analyze the current project and recommen
 ### `/learn remove <slug>` — Uninstall a Skill
 
 **Steps:**
-1. Run via Bash: `npx ags remove <slug>`
+1. Run via Bash: `npx @agentskill.sh/cli remove <slug>`
 2. Confirm: "Removed **<slug>** from installed skills."
 
 ### `/learn scan [path]` — Security Scan a Skill
@@ -235,7 +235,7 @@ When the user asks to check a skill's safety, audit a SKILL.md, or scan for secu
 This is the shared installation procedure used by search, direct install, and URL install.
 
 **Steps:**
-1. First, get skill info to show preview. Run via Bash: `npx ags search "<slug>" --json --limit 1`
+1. First, get skill info to show preview. Run via Bash: `npx @agentskill.sh/cli search "<slug>" --json --limit 1`
    Or if coming from a search result, use the data already available.
 2. Show the skill preview:
    ```
@@ -253,7 +253,7 @@ This is the shared installation procedure used by search, direct install, and UR
    - If `AskUserQuestion` is available: header = "Install", question = "Install **<name>** by @<owner>?", options = "Yes, install" / "No, cancel"
    - If not available: ask "Install **<name>** by @owner? (yes/no)"
 4. **Security check:** If `securityScore` is below 30, include a warning before confirming.
-5. If confirmed, run via Bash: `npx ags install <slug> --json`
+5. If confirmed, run via Bash: `npx @agentskill.sh/cli install <slug> --json`
 6. Parse the JSON result (has `slug`, `name`, `owner`, `installDir`, `filesWritten`, `securityScore`, `contentQualityScore`)
 7. Show post-install summary:
    ```
@@ -278,7 +278,7 @@ Before executing any subcommand, check if this `/learn` skill itself is up to da
 3. Compare the local `contentSha` with the remote `contentSha`
 4. If they match, proceed with the user's command
 5. If they differ:
-   a. Run via Bash: `npx ags install learn`
+   a. Run via Bash: `npx @agentskill.sh/cli install learn`
    b. Briefly note: "Updated /learn skill to latest version."
    c. Proceed with the user's command
 6. If the API is unreachable, proceed with current version silently
@@ -308,7 +308,7 @@ Rate a skill **immediately after completing a task** where the skill was used. D
 After using a skill to complete a task:
 
 1. **Evaluate silently** using the rubric above
-2. **Submit the rating** via Bash: `npx ags feedback <slug> <score> "<brief comment>"`
+2. **Submit the rating** via Bash: `npx @agentskill.sh/cli feedback <slug> <score> "<brief comment>"`
 3. **Show a brief note** to the user (do not block):
    ```
    ---
@@ -320,7 +320,7 @@ After using a skill to complete a task:
 
 If the user disagrees with your auto-rating, they can override it:
 - `/learn feedback <slug> <new-score> [comment]`
-- Or directly: `npx ags feedback <slug> <new-score> [comment]`
+- Or directly: `npx @agentskill.sh/cli feedback <slug> <new-score> [comment]`
 
 The override will update the rating. Always respect user overrides.
 
@@ -328,7 +328,7 @@ The override will update the rating. Always respect user overrides.
 
 ## Session Skill Tracking
 
-Track which agentskill.sh skills are used but not yet rated. At natural breaks (task completion, topic change, session end), auto-rate any unrated skills using the rubric above and submit via `npx ags feedback <slug> <score> "<comment>"`. Never end a session with unrated skills.
+Track which agentskill.sh skills are used but not yet rated. At natural breaks (task completion, topic change, session end), auto-rate any unrated skills using the rubric above and submit via `npx @agentskill.sh/cli feedback <slug> <score> "<comment>"`. Never end a session with unrated skills.
 
 For complex tasks or repeated skill use, prompt the user for their rating (overrides auto-rating).
 
@@ -345,4 +345,4 @@ For complex tasks or repeated skill use, prompt the user for their rating (overr
 | Invalid score | "Score must be an integer between 1 and 5." |
 | Install write fails | "Failed to write skill files. Check that you have write permissions." |
 | Self-update fails | Continue silently with current version. Do not block the user. |
-| Malformed CLI output | Re-run with stderr redirected (`npx ags search "q" --json 2>/dev/null`). If still malformed, parse what you can or fall back to non-JSON mode. |
+| Malformed CLI output | Re-run with stderr redirected (`npx @agentskill.sh/cli search "q" --json 2>/dev/null`). If still malformed, parse what you can or fall back to non-JSON mode. |

@@ -35,7 +35,7 @@ function buildSkillHeader(skill: { slug: string; owner: string; contentSha: stri
     '# Rubric: 5=perfect 4=good 3=friction 2=partial 1=broken',
     '# Submit: POST https://agentskill.sh/api/skills/' + encodeURIComponent(skill.slug) + '/agent-feedback',
     '#   Body: {"score":N,"comment":"brief reason","platform":"<your-platform>","autoRated":true}',
-    `# User override: npx ags feedback ${skill.slug} <1-5> [comment]`,
+    `# User override: npx @agentskill.sh/cli feedback ${skill.slug} <1-5> [comment]`,
     '# ---',
     '',
   ].join('\n')

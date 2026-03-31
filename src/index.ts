@@ -7,7 +7,7 @@ import { removeCommand } from './commands/remove.js'
 import { feedbackCommand } from './commands/feedback.js'
 import { updateCommand } from './commands/update.js'
 
-const VERSION = '1.0.5'
+const VERSION = '1.0.6'
 
 const HELP = `ags v${VERSION} — search, install, and manage AI agent skills
 
@@ -38,7 +38,7 @@ Examples:
   ags feedback seo-optimizer 5 "Worked perfectly"
   ags update
 
-More info: https://agentskill.sh/docs
+More info: https://agentskill.sh/install
 `
 
 async function main(): Promise<void> {
