@@ -6,14 +6,16 @@ import { listCommand } from './commands/list.js'
 import { removeCommand } from './commands/remove.js'
 import { feedbackCommand } from './commands/feedback.js'
 import { updateCommand } from './commands/update.js'
+import { setupCommand } from './commands/setup.js'
 
-const VERSION = '1.0.6'
+const VERSION = '1.0.7'
 
 const HELP = `ags v${VERSION} — search, install, and manage AI agent skills
 
 Usage:
   ags search <query> [--json] [--limit N] [--platform NAME]
   ags install <slug>  [--json] [--platform NAME]
+  ags setup                                        # Install all official skills
   ags list            [--json]
   ags remove <slug>
   ags feedback <slug> <1-5> [comment]
@@ -24,12 +26,14 @@ Usage:
 Commands:
   search    Search for skills on agentskill.sh
   install   Install a skill to your project
+  setup     Install all official agentskill.sh skills (/learn, /review-skill)
   list      Show installed skills
   remove    Uninstall a skill
   feedback  Rate a skill (1-5) with optional comment
   update    Check for and apply skill updates
 
 Examples:
+  ags setup
   ags search react
   ags install seo-optimizer
   ags install @anthropics/react-best-practices
@@ -83,6 +87,10 @@ async function main(): Promise<void> {
       case 'update':
       case 'upgrade':
         await updateCommand(commandArgs)
+        break
+      case 'setup':
+      case 'init':
+        await setupCommand(commandArgs)
         break
       default:
         console.error(`Unknown command: ${command}`)
