@@ -26,36 +26,21 @@ That's it. Your agent will install `/learn`, analyze your project, and suggest r
 <details>
 <summary>Other install methods</summary>
 
-**Plugin marketplace (Claude Code)**
+**Install globally (then use `ags` directly)**
+
+```bash
+npm install -g @agentskill.sh/cli
+ags setup
+```
+
+**Plugin marketplace (Claude Code only)**
 
 ```bash
 /plugin marketplace add https://agentskill.sh/marketplace.json
 /plugin install learn@agentskill-sh
 ```
 
-**CLI (terminal)**
-
-```bash
-npx ags search "react best practices"
-npx ags install seo-optimizer
-```
-
-Or install globally:
-
-```bash
-npm install -g @agentskill.sh/cli
-ags search react
-```
-
-**Git clone**
-
-```bash
-# Claude Code
-git clone https://github.com/agentskill-sh/ags.git ~/.claude/skills/ags
-
-# Cursor
-git clone https://github.com/agentskill-sh/ags.git ~/.cursor/skills/ags
-```
+Note: the plugin marketplace only installs the `/learn` skill. Use `npx @agentskill.sh/cli setup` to get all skills.
 
 </details>
 
