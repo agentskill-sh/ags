@@ -4,6 +4,8 @@ description: Discover, install, and manage AI agent skills from agentskill.sh. S
 metadata:
   author: agentskill-sh
   version: "3.0"
+includes:
+  - references/**
 ---
 
 # Learn — Find & Install Agent Skills
