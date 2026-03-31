@@ -1,5 +1,6 @@
+import pc from 'picocolors'
 import { apiFetch } from '../api.js'
-import { detectPlatform } from '../platform.js'
+import { ORANGE } from '../ui.js'
 
 interface FeedbackResponse {
   success: boolean
@@ -30,21 +31,17 @@ export async function feedbackCommand(args: string[]): Promise<void> {
     process.exit(1)
   }
 
-  // Normalize slug: strip leading @ if present
   const cleanSlug = slug.startsWith('@') ? slug.slice(1) : slug
-
-  const platform = detectPlatform()
 
   const body: Record<string, unknown> = {
     score,
-    platform,
-    agentName: 'ags',
+    platform: 'claude-code',
+    agentName: 'agentskill-sh-cli',
     sessionId: `cli-${Date.now()}`,
     autoRated: false,
   }
   if (comment) body.comment = comment
 
-  // If slug contains owner prefix, split it for the API
   const apiSlug = cleanSlug.includes('/') ? cleanSlug.split('/').pop()! : cleanSlug
   const owner = cleanSlug.includes('/') ? cleanSlug.split('/')[0] : undefined
   if (owner) body.owner = owner
@@ -58,17 +55,25 @@ export async function feedbackCommand(args: string[]): Promise<void> {
   )
 
   if (jsonFlag) {
-    console.log(JSON.stringify({
-      slug: cleanSlug,
-      score,
-      comment: comment || null,
-      averageScore: data.averageScore,
-      ratingCount: data.ratingCount,
-    }, null, 2))
+    console.log(
+      JSON.stringify(
+        {
+          slug: cleanSlug,
+          score,
+          comment: comment || null,
+          averageScore: data.averageScore,
+          ratingCount: data.ratingCount,
+        },
+        null,
+        2,
+      ),
+    )
     return
   }
 
-  console.log(`\nFeedback submitted for "${cleanSlug}": ${score}/5`)
-  if (comment) console.log(`Comment: ${comment}`)
-  console.log(`Community average: ${data.averageScore}/5 (${data.ratingCount} ratings)`)
+  console.log()
+  console.log(pc.green('\u2713') + ` Feedback submitted for ${ORANGE(cleanSlug)}: ${pc.bold(`${score}/5`)}`)
+  if (comment) console.log(`  Comment: ${comment}`)
+  console.log(`  Community average: ${pc.bold(`${data.averageScore}/5`)} (${data.ratingCount} ratings)`)
+  console.log()
 }

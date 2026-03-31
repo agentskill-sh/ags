@@ -1,38 +1,133 @@
-import { rm } from 'fs/promises'
+import * as p from '@clack/prompts'
+import pc from 'picocolors'
+import { rmSync, existsSync, readdirSync } from 'fs'
 import { join } from 'path'
-import { existsSync } from 'fs'
-import { detectSkillDir } from '../platform.js'
+import { readLock, removeFromLock } from '../skill-lock.js'
+import { agents, getAgentDisplayName } from '../agents.js'
+import { ORANGE } from '../ui.js'
+import { sanitizeName } from '../installer.js'
 
 export async function removeCommand(args: string[]): Promise<void> {
-  const slug = args.find(a => !a.startsWith('--'))
+  const yesFlag = args.includes('--yes') || args.includes('-y')
+  let slug = args.find((a) => !a.startsWith('--'))
 
+  const lock = readLock()
+  const installedSlugs = Object.keys(lock.skills)
+
+  // If no slug provided, show interactive multiselect
   if (!slug) {
-    console.error('Usage: ags remove <slug>')
-    process.exit(1)
+    if (!installedSlugs.length) {
+      p.log.warn('No skills installed.')
+      return
+    }
+
+    const selected = await p.multiselect({
+      message: 'Select skills to remove:',
+      options: installedSlugs.map((s) => ({
+        value: s,
+        label: s,
+        hint: lock.skills[s].agents.map((a) => getAgentDisplayName(a)).join(', '),
+      })),
+      required: true,
+    })
+
+    if (p.isCancel(selected)) {
+      p.cancel('Cancelled.')
+      return
+    }
+
+    const slugs = selected as string[]
+
+    if (!yesFlag) {
+      const confirm = await p.confirm({
+        message: `Remove ${slugs.length} skill${slugs.length !== 1 ? 's' : ''}?`,
+      })
+
+      if (p.isCancel(confirm) || !confirm) {
+        p.cancel('Cancelled.')
+        return
+      }
+    }
+
+    for (const s of slugs) {
+      removeSkill(s, lock.skills[s]?.agents || [])
+      removeFromLock(s)
+      p.log.success(`Removed ${ORANGE(s)}`)
+    }
+
+    return
   }
 
-  const baseDir = detectSkillDir()
-  // Handle both "slug" and "owner/slug" formats
+  // Single slug removal
   const cleanSlug = slug.startsWith('@') ? slug.slice(1) : slug
-  const skillDir = join(baseDir, cleanSlug)
 
-  if (!existsSync(skillDir)) {
-    console.error(`Skill "${slug}" is not installed.`)
-    console.error(`Directory not found: ${skillDir}`)
-    process.exit(1)
+  if (!yesFlag) {
+    const confirm = await p.confirm({
+      message: `Remove "${cleanSlug}"?`,
+    })
+
+    if (p.isCancel(confirm) || !confirm) {
+      p.cancel('Cancelled.')
+      return
+    }
   }
 
-  await rm(skillDir, { recursive: true })
+  const entry = lock.skills[cleanSlug]
+  const agentsToClean = entry?.agents || []
 
-  // Clean up empty owner directory if it was a nested path
-  if (cleanSlug.includes('/')) {
-    const ownerDir = join(baseDir, cleanSlug.split('/')[0])
-    try {
-      const { readdir } = await import('fs/promises')
-      const remaining = await readdir(ownerDir)
-      if (remaining.length === 0) await rm(ownerDir, { recursive: true })
-    } catch { /* ignore */ }
+  removeSkill(cleanSlug, agentsToClean)
+  removeFromLock(cleanSlug)
+
+  p.log.success(`Removed ${ORANGE(cleanSlug)}`)
+}
+
+function removeSkill(slug: string, agentTypes: string[]): void {
+  const safeName = sanitizeName(slug)
+
+  // Remove from each agent's skill directory
+  if (agentTypes.length) {
+    for (const agentType of agentTypes) {
+      const config = agents[agentType]
+      if (!config) continue
+
+      const dirs = [
+        join(process.cwd(), config.skillsDir, safeName),
+        join(config.globalSkillsDir, safeName),
+      ]
+
+      for (const dir of dirs) {
+        if (existsSync(dir)) {
+          rmSync(dir, { recursive: true, force: true })
+          cleanupEmptyParent(dir)
+        }
+      }
+    }
+  } else {
+    // No agents recorded: try all known agent directories
+    for (const [, config] of Object.entries(agents)) {
+      const dirs = [
+        join(process.cwd(), config.skillsDir, safeName),
+        join(config.globalSkillsDir, safeName),
+      ]
+
+      for (const dir of dirs) {
+        if (existsSync(dir)) {
+          rmSync(dir, { recursive: true, force: true })
+          cleanupEmptyParent(dir)
+        }
+      }
+    }
   }
+}
 
-  console.log(`Removed "${cleanSlug}" from installed skills.`)
+function cleanupEmptyParent(dir: string): void {
+  const parent = join(dir, '..')
+  try {
+    const remaining = readdirSync(parent)
+    if (remaining.length === 0) {
+      rmSync(parent, { recursive: true, force: true })
+    }
+  } catch {
+    // Ignore
+  }
 }
