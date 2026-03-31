@@ -7,7 +7,7 @@ import { removeCommand } from './commands/remove.js'
 import { feedbackCommand } from './commands/feedback.js'
 import { updateCommand } from './commands/update.js'
 
-const VERSION = '1.0.3'
+const VERSION = '1.0.5'
 
 const HELP = `ags v${VERSION} — search, install, and manage AI agent skills
 

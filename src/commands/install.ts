@@ -58,12 +58,8 @@ export async function installCommand(args: string[]): Promise<void> {
   // Parse owner from slug if present (e.g. @owner/slug or owner/slug)
   let apiPath: string
   const cleanSlug = slug.startsWith('@') ? slug.slice(1) : slug
-  if (cleanSlug.includes('/')) {
-    const [owner, name] = cleanSlug.split('/')
-    apiPath = `/agent/skills/${encodeURIComponent(name)}/install?owner=${encodeURIComponent(owner)}`
-  } else {
-    apiPath = `/agent/skills/${encodeURIComponent(cleanSlug)}/install`
-  }
+  // Use encoded composite slug (owner%2Fname) for reliable lookup
+  apiPath = `/agent/skills/${encodeURIComponent(cleanSlug)}/install`
   if (platform) {
     apiPath += apiPath.includes('?') ? `&platform=${platform}` : `?platform=${platform}`
   }
