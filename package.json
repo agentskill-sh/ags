@@ -1,0 +1,42 @@
+{
+  "name": "agentskill-cli",
+  "version": "0.2.0",
+  "description": "Search, install, and manage AI agent skills from agentskill.sh",
+  "type": "module",
+  "bin": {
+    "agentskill": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js"
+  },
+  "keywords": [
+    "ai-agent",
+    "skills",
+    "cli",
+    "claude",
+    "cursor",
+    "copilot",
+    "windsurf",
+    "codex",
+    "gemini",
+    "agentskill"
+  ],
+  "author": "agentskill.sh",
+  "license": "MIT",
+  "homepage": "https://agentskill.sh",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agentskill-sh/learn"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  }
+}
