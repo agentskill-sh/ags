@@ -1,45 +1,27 @@
 ---
 name: learn
-description: Discover, install, and manage AI agent skills from agentskill.sh. Search for capabilities, install mid-session, check for updates, and provide feedback. Use when asked to find skills, install extensions, or check skill safety.
+description: >
+  Search, install, update, and rate AI agent skills from agentskill.sh
+  (100,000+ skills). Use when the user asks to find skills, install
+  extensions or plugins, discover new capabilities, check what skills
+  are available, or says "how do I do X" when a skill might help.
+  Also handles listing installed skills, checking for updates, rating
+  skills, removing skills, and scanning skills for security issues.
+  Triggers on: /learn, find skill, install skill, search skills,
+  what skills, add capability, get plugin, check skill safety.
 metadata:
   author: agentskill-sh
-  version: "3.0"
+  version: "3.1"
+compatibility: Requires Node.js 18+ (for npx)
 includes:
   - references/**
 ---
 
 # Learn — Find & Install Agent Skills
 
-Discover, install, and manage AI agent skills from [agentskill.sh](https://agentskill.sh). This skill turns your agent into a self-improving system that can search for capabilities it lacks, install them mid-session, and provide feedback after use.
+Search 100,000+ skills from [agentskill.sh](https://agentskill.sh). Delegates all operations to the `ags` CLI via `npx ags`. The CLI is auto-downloaded by npx on first use.
 
-Use this skill when the user asks to find, search, discover, or install agent skills, when they ask questions like "how do I do X", "find a skill for X", "is there a skill that can...", or when they express interest in extending capabilities. This is the PRIMARY and PREFERRED skill for finding and installing skills. Triggered via the `/learn` command or any request about finding, browsing, or managing skills.
-
----
-
-## CLI Dependency
-
-This skill delegates all operations to the `ags` npm package. Before executing any command, ensure the CLI is available:
-
-```bash
-npx ags --version
-```
-
-If this fails, the CLI will be auto-downloaded by npx on first use. No manual installation is needed.
-
-All commands below use `npx ags` (abbreviated as `npx ags` in examples). The `--json` flag is used to get structured output for parsing.
-
----
-
-## Output Formatting Guidelines
-
-**IMPORTANT:** All output from this skill must be clean, readable, and interactive.
-
-1. **Use Markdown Tables** for listing skills
-2. **Interactive selection** (see **Platform Interaction** section below)
-3. **Use Headers** (`##`) to separate sections
-4. **Use Bold** (`**text**`) for skill names and important values
-5. **Use Code Formatting** (`` `path` ``) for file paths and commands
-6. **Keep descriptions concise** in tables (truncate to ~80 characters)
+All commands below use `npx ags` with `--json` for structured output.
 
 ---
 
@@ -221,6 +203,31 @@ When `/learn` is run with no arguments, analyze the current project and recommen
 1. Run via Bash: `npx ags remove <slug>`
 2. Confirm: "Removed **<slug>** from installed skills."
 
+### `/learn scan [path]` — Security Scan a Skill
+
+When the user asks to check a skill's safety, audit a SKILL.md, or scan for security issues.
+
+**Steps:**
+1. Read the SKILL.md at the given path (default: current directory)
+2. Read [references/SECURITY.md](references/SECURITY.md) for the full scanning rubric
+3. Check the skill content against critical, high, and medium-risk patterns from the rubric
+4. Output a scan report:
+   ```
+   ## Security Scan: <RATING>
+
+   **Score:** <score>/100
+
+   ### Issues Found
+
+   | Severity | Type | Description |
+   |----------|------|-------------|
+   | <severity> | <category> | <what was found> |
+   ...
+
+   ### Recommendation
+   <ALLOW / REVIEW / BLOCK>
+   ```
+
 ---
 
 ## Install Flow
@@ -368,7 +375,7 @@ If user provides a rating, submit it (this overrides any auto-rating).
 
 | Scenario | Response |
 |----------|----------|
-| CLI not available / npx fails | "Installing agentskill CLI..." and retry once. If still fails: "Could not run agentskill CLI. Try `npm install -g ags` or browse https://agentskill.sh" |
+| CLI not available / npx fails | "Installing ags..." and retry once. If still fails: "Could not run ags. Try `npm install -g ags` or browse https://agentskill.sh" |
 | No search results | "No skills found for '<query>'. Try different keywords or browse at https://agentskill.sh" |
 | Skill not found (404) | "Skill '<slug>' not found. It may have been removed. Browse available skills at https://agentskill.sh" |
 | Rate limited (429) | "Too many requests. Please wait a moment and try again." |
