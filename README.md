@@ -3,8 +3,8 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/ags"><img src="https://img.shields.io/npm/v/ags" alt="npm version"></a>
-  <a href="https://www.npmjs.com/package/ags"><img src="https://img.shields.io/npm/dm/ags" alt="npm downloads"></a>
+  <a href="https://www.npmjs.com/package/@agentskill.sh/cli"><img src="https://img.shields.io/npm/v/@agentskill.sh/cli" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/@agentskill.sh/cli"><img src="https://img.shields.io/npm/dm/@agentskill.sh/cli" alt="npm downloads"></a>
   <img src="https://img.shields.io/badge/platforms-15+-blue" alt="15+ platforms">
   <a href="https://github.com/agentskill-sh/ags/blob/main/LICENSE"><img src="https://img.shields.io/github/license/agentskill-sh/ags?color=blue" alt="License"></a>
   <a href="https://github.com/agentskill-sh/ags/stargazers"><img src="https://img.shields.io/github/stars/agentskill-sh/ags" alt="GitHub stars"></a>
@@ -44,7 +44,7 @@ npx ags install seo-optimizer
 Or install globally:
 
 ```bash
-npm install -g ags
+npm install -g @agentskill.sh/cli
 ags search react
 ```
 
@@ -88,7 +88,7 @@ This repo contains the official CLI and skills for [agentskill.sh](https://agent
 
 | What | Description |
 |------|-------------|
-| **`ags` CLI** | Terminal tool to search, install, list, update, remove, and rate skills. Published to npm as [`ags`](https://www.npmjs.com/package/ags). |
+| **`ags` CLI** | Terminal tool to search, install, list, update, remove, and rate skills. Published to npm as [`@agentskill.sh/cli`](https://www.npmjs.com/package/@agentskill.sh/cli). |
 | **`/learn` skill** | Agent skill that gives your AI the same capabilities mid-conversation. Uses the CLI under the hood. |
 | **`review-skill` skill** | Reviews SKILL.md files against best practices and scores them on 10 quality dimensions. |
 
@@ -199,7 +199,7 @@ The `/learn` skill includes a [security pattern library](skills/learn/references
 ```
 .
 ├── README.md
-├── package.json              # npm package: ags
+├── package.json              # npm: @agentskill.sh/cli
 ├── src/                      # CLI source
 │   ├── index.ts
 │   ├── api.ts

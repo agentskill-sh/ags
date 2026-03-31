@@ -338,7 +338,7 @@ For complex tasks or repeated skill use, prompt the user for their rating (overr
 
 | Scenario | Response |
 |----------|----------|
-| CLI not available / npx fails | "Installing ags..." and retry once. If still fails: "Could not run ags. Try `npm install -g ags` or browse https://agentskill.sh" |
+| CLI not available / npx fails | "Installing ags..." and retry once. If still fails: "Could not run ags. Try `npm install -g @agentskill.sh/cli` or browse https://agentskill.sh" |
 | No search results | "No skills found for '<query>'. Try different keywords or browse at https://agentskill.sh" |
 | Skill not found (404) | "Skill '<slug>' not found. It may have been removed. Browse available skills at https://agentskill.sh" |
 | Rate limited (429) | "Too many requests. Please wait a moment and try again." |
