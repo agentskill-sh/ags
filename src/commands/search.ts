@@ -60,24 +60,25 @@ export async function searchCommand(args: string[]): Promise<void> {
   const rows = data.results.map(s => ({
     name: s.name,
     owner: `@${s.owner}`,
-    desc: truncate(s.description || '', 60),
+    desc: truncate(s.description || '', 50),
+    quality: s.contentQualityScore != null ? `${s.contentQualityScore}/100` : '\u2014',
     security: s.securityScore != null ? `${s.securityScore}/100` : '\u2014',
   }))
 
   const cols = {
     name: Math.max(4, ...rows.map(r => r.name.length)),
     owner: Math.max(6, ...rows.map(r => r.owner.length)),
-    desc: Math.max(11, ...rows.map(r => r.desc.length)),
+    quality: Math.max(7, ...rows.map(r => r.quality.length)),
     security: Math.max(8, ...rows.map(r => r.security.length)),
   }
 
   const pad = (s: string, w: number) => s + ' '.repeat(Math.max(0, w - s.length))
 
-  console.log(`  ${pad('Name', cols.name)}  ${pad('Author', cols.owner)}  ${pad('Security', cols.security)}  Description`)
-  console.log(`  ${'-'.repeat(cols.name)}  ${'-'.repeat(cols.owner)}  ${'-'.repeat(cols.security)}  ${'-'.repeat(11)}`)
+  console.log(`  ${pad('Name', cols.name)}  ${pad('Author', cols.owner)}  ${pad('Quality', cols.quality)}  ${pad('Security', cols.security)}  Description`)
+  console.log(`  ${'-'.repeat(cols.name)}  ${'-'.repeat(cols.owner)}  ${'-'.repeat(cols.quality)}  ${'-'.repeat(cols.security)}  ${'-'.repeat(11)}`)
 
   for (const r of rows) {
-    console.log(`  ${pad(r.name, cols.name)}  ${pad(r.owner, cols.owner)}  ${pad(r.security, cols.security)}  ${r.desc}`)
+    console.log(`  ${pad(r.name, cols.name)}  ${pad(r.owner, cols.owner)}  ${pad(r.quality, cols.quality)}  ${pad(r.security, cols.security)}  ${r.desc}`)
   }
 
   console.log(`\nInstall: npx @agentskill.sh/cli install <slug>`)

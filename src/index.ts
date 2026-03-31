@@ -8,7 +8,7 @@ import { feedbackCommand } from './commands/feedback.js'
 import { updateCommand } from './commands/update.js'
 import { setupCommand } from './commands/setup.js'
 
-const VERSION = '1.0.8'
+const VERSION = '1.0.9'
 
 const HELP = `ags v${VERSION} — search, install, and manage AI agent skills
 
