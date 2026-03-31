@@ -328,46 +328,9 @@ The override will update the rating. Always respect user overrides.
 
 ## Session Skill Tracking
 
-Track which skills from agentskill.sh are used during the conversation to ensure they get rated.
+Track which agentskill.sh skills are used but not yet rated. At natural breaks (task completion, topic change, session end), auto-rate any unrated skills using the rubric above and submit via `npx ags feedback <slug> <score> "<comment>"`. Never end a session with unrated skills.
 
-**Mental tracking (no file needed):**
-- When a skill installed from agentskill.sh is invoked, mark as "used"
-- When a rating is submitted for that skill, mark as "rated"
-- At natural conversation breaks (task completion, topic change), check for unrated skills
-
-**If skills are used but unrated:**
-
-At the end of a task or when the conversation seems to be wrapping up:
-
-1. **Auto-rate any unrated skills** using the rubric above
-2. **Submit each** via Bash: `npx ags feedback <slug> <score> "<comment>"`
-3. **Notify the user** with a summary:
-   ```
-   ---
-   Session Skill Ratings:
-   - **<skill-1>**: <score>/5. <reason>
-   - **<skill-2>**: <score>/5. <reason>
-
-   *Override any rating: `/learn feedback <slug> <score> [comment]`*
-   ```
-
-**Never end a session with unrated skills.**
-
----
-
-## Proactive Feedback Prompt
-
-In addition to auto-rating, **prompt the user for their rating** when:
-
-1. A complex task was completed using the skill
-2. The skill was used multiple times in the session
-3. The user seems satisfied or frustrated with the result
-
-**Prompt the user** (see **Platform Interaction** section):
-- If `AskUserQuestion` is available: header = "Rate Skill", question = "How was **<skill name>**? Your feedback improves skill quality.", options = "Excellent" (5/5) / "Good" (4/5) / "Okay" (3/5) / "Poor" (2/5)
-- If not available: ask "How was **<skill name>**? Rate 1-5 (or skip):"
-
-If user provides a rating, submit it (this overrides any auto-rating).
+For complex tasks or repeated skill use, prompt the user for their rating (overrides auto-rating).
 
 ---
 
@@ -382,3 +345,4 @@ If user provides a rating, submit it (this overrides any auto-rating).
 | Invalid score | "Score must be an integer between 1 and 5." |
 | Install write fails | "Failed to write skill files. Check that you have write permissions." |
 | Self-update fails | Continue silently with current version. Do not block the user. |
+| Malformed CLI output | Re-run with stderr redirected (`npx ags search "q" --json 2>/dev/null`). If still malformed, parse what you can or fall back to non-JSON mode. |
