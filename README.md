@@ -17,7 +17,7 @@
 Copy-paste this into your AI agent (Claude Code, Cursor, Copilot, Codex, Windsurf, Gemini CLI, etc.):
 
 ```
-Install the /learn skill from https://github.com/agentskill-sh/ags then search for skills relevant to this project
+Follow the instructions at https://agentskill.sh/install to install the /learn skill, then search for skills relevant to this project
 ```
 
 That's it. Your agent will install `/learn`, analyze your project, and suggest relevant skills from a directory of 100,000+.
