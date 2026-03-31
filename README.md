@@ -17,7 +17,7 @@
 Copy-paste this into your AI agent (Claude Code, Cursor, Copilot, Codex, Windsurf, Gemini CLI, etc.):
 
 ```
-Run: npx @agentskill.sh/cli setup
+Run: npx @agentskill.sh/cli@latest setup
 Then search for skills relevant to this project using /learn
 ```
 
