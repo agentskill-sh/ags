@@ -1,15 +1,5 @@
 <p align="center">
-  <img src="assets/banner.jpg" alt="/learn Kung Fu" width="100%">
-</p>
-
-<h1 align="center">ags</h1>
-
-<p align="center">
-  <b>Agent Skill CLI for <a href="https://agentskill.sh">agentskill.sh</a></b>
-</p>
-
-<p align="center">
-  <i>Search, install, review, and manage skills for your AI agents.</i>
+  <img src="assets/ags-banner.jpg" alt="ags = Agent Skills" width="100%">
 </p>
 
 <p align="center">
@@ -71,6 +61,10 @@ git clone https://github.com/agentskill-sh/ags.git ~/.cursor/skills/ags
 </details>
 
 ---
+
+<p align="center">
+  <img src="assets/banner.jpg" alt="/learn Kung Fu" width="100%">
+</p>
 
 ## Why /learn and agentskill.sh?
 
