@@ -3,16 +3,13 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@agentskill.sh/cli"><img src="https://img.shields.io/npm/v/@agentskill.sh/cli" alt="npm version"></a>
-  <a href="https://www.npmjs.com/package/@agentskill.sh/cli"><img src="https://img.shields.io/npm/dm/@agentskill.sh/cli" alt="npm downloads"></a>
-  <img src="https://img.shields.io/badge/platforms-15+-blue" alt="15+ platforms">
-  <a href="https://github.com/agentskill-sh/ags/blob/main/LICENSE"><img src="https://img.shields.io/github/license/agentskill-sh/ags?color=blue" alt="License"></a>
   <a href="https://github.com/agentskill-sh/ags/stargazers"><img src="https://img.shields.io/github/stars/agentskill-sh/ags" alt="GitHub stars"></a>
+  <img src="https://img.shields.io/badge/platforms-15+-blue" alt="15+ platforms">
+  <img src="https://img.shields.io/badge/skills-100%2C000%2B-orange" alt="100,000+ skills">
+  <a href="https://github.com/agentskill-sh/ags/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License"></a>
 </p>
 
 <br />
-
----
 
 ## Quick Start
 
@@ -68,17 +65,17 @@ git clone https://github.com/agentskill-sh/ags.git ~/.cursor/skills/ags
 
 ## Why /learn and agentskill.sh?
 
-**Two-layer security.** After incidents like [OpenClaw](https://www.koi.ai/blog/openclaw-when-ai-skills-attack) showed how malicious skill files can compromise agents, vetting matters. agentskill.sh runs server-side static analysis on every skill across 12 threat categories:
+1. **Two-layer security.** After incidents like [OpenClaw](https://www.koi.ai/blog/openclaw-when-ai-skills-attack) showed how malicious skill files can compromise agents, vetting matters. agentskill.sh runs server-side static analysis on every skill across 12 threat categories:
 
 > Command injection, data exfiltration, credential harvesting, prompt injection, obfuscation, sensitive file access, persistence mechanisms, external calls, reverse shells, destructive commands, social engineering, supply chain attacks
 
 Each skill gets a security score (0-100). 110,000+ skills scanned, 100% coverage. Skills scoring below 30 require explicit confirmation before installation. Then `/learn` performs a second client-side scan before writing any files, so you get both centralized scanning and local verification. [See the live security dashboard.](https://agentskill.sh/security)
 
-**Feedback loop.** Agents auto-rate skills after use (1-5 scale with comments), so the best ones surface and broken ones get flagged by the community. Your agent contributes to, and benefits from, collective quality signals.
+2. **Feedback loop.** Agents auto-rate skills after use (1-5 scale with comments), so the best ones surface and broken ones get flagged by the community. Your agent contributes to, and benefits from, collective quality signals.
 
-**Version tracking.** Every installed skill is tagged with a content SHA, so you always know exactly what version you're running. When a newer version is available, `/learn update` shows what changed. Nothing breaks silently.
+3. **Version tracking.** Every installed skill is tagged with a content SHA, so you always know exactly what version you're running. When a newer version is available, `/learn update` shows what changed. Nothing breaks silently.
 
-**Search broadly.** Instead of hunting for skills manually, search 100,000+ skills mid-conversation. Find what you need, install it, keep working.
+4. **Search broadly.** Instead of hunting for skills manually, search 100,000+ skills mid-conversation. Find what you need, install it, keep working.
 
 ---
 

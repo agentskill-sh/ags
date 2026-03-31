@@ -1,6 +1,6 @@
 {
   "name": "@agentskill.sh/cli",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Agent Skill CLI. Search, install, review, and manage AI agent skills from agentskill.sh.",
   "type": "module",
   "bin": {
