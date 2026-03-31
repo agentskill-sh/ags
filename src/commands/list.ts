@@ -81,7 +81,7 @@ export async function listCommand(args: string[]): Promise<void> {
 
   if (!skills.length) {
     console.log('No skills installed.')
-    console.log(`\nSearch: agentskill search <query>`)
+    console.log(`\nSearch: learn-skills search <query>`)
     return
   }
 

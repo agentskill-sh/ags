@@ -1,10 +1,10 @@
 {
-  "name": "agentskill-cli",
+  "name": "learn-skills",
   "version": "0.2.0",
   "description": "Search, install, and manage AI agent skills from agentskill.sh",
   "type": "module",
   "bin": {
-    "agentskill": "./dist/index.js"
+    "learn-skills": "./dist/index.js"
   },
   "main": "./dist/index.js",
   "files": [

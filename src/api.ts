@@ -6,7 +6,7 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      'User-Agent': `agentskill-cli/${VERSION}`,
+      'User-Agent': `learn-skills/${VERSION}`,
       ...options?.headers,
     },
   })

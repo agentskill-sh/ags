@@ -9,17 +9,17 @@ import { updateCommand } from './commands/update.js'
 
 const VERSION = '0.2.0'
 
-const HELP = `agentskill v${VERSION} — search, install, and manage AI agent skills
+const HELP = `learn-skills v${VERSION} — search, install, and manage AI agent skills
 
 Usage:
-  agentskill search <query> [--json] [--limit N] [--platform NAME]
-  agentskill install <slug>  [--json] [--platform NAME]
-  agentskill list            [--json]
-  agentskill remove <slug>
-  agentskill feedback <slug> <1-5> [comment]
-  agentskill update
-  agentskill --version
-  agentskill --help
+  learn-skills search <query> [--json] [--limit N] [--platform NAME]
+  learn-skills install <slug>  [--json] [--platform NAME]
+  learn-skills list            [--json]
+  learn-skills remove <slug>
+  learn-skills feedback <slug> <1-5> [comment]
+  learn-skills update
+  learn-skills --version
+  learn-skills --help
 
 Commands:
   search    Search for skills on agentskill.sh
@@ -30,13 +30,13 @@ Commands:
   update    Check for and apply skill updates
 
 Examples:
-  agentskill search react
-  agentskill install seo-optimizer
-  agentskill install @anthropics/react-best-practices
-  agentskill list --json
-  agentskill remove seo-optimizer
-  agentskill feedback seo-optimizer 5 "Worked perfectly"
-  agentskill update
+  learn-skills search react
+  learn-skills install seo-optimizer
+  learn-skills install @anthropics/react-best-practices
+  learn-skills list --json
+  learn-skills remove seo-optimizer
+  learn-skills feedback seo-optimizer 5 "Worked perfectly"
+  learn-skills update
 
 More info: https://agentskill.sh/docs
 `
@@ -86,7 +86,7 @@ async function main(): Promise<void> {
         break
       default:
         console.error(`Unknown command: ${command}`)
-        console.error('Run "agentskill --help" for usage.')
+        console.error('Run "learn-skills --help" for usage.')
         process.exit(1)
     }
   } catch (err) {

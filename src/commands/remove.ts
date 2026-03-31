@@ -7,7 +7,7 @@ export async function removeCommand(args: string[]): Promise<void> {
   const slug = args.find(a => !a.startsWith('--'))
 
   if (!slug) {
-    console.error('Usage: agentskill remove <slug>')
+    console.error('Usage: learn-skills remove <slug>')
     process.exit(1)
   }
 
