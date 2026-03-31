@@ -4,8 +4,9 @@
 
 <p align="center">
   <a href="https://github.com/agentskill-sh/ags/stargazers"><img src="https://img.shields.io/github/stars/agentskill-sh/ags" alt="GitHub stars"></a>
-  <img src="https://img.shields.io/badge/platforms-15+-blue" alt="15+ platforms">
+  <a href="https://www.npmjs.com/package/@agentskill.sh/cli"><img src="https://img.shields.io/npm/v/@agentskill.sh/cli" alt="npm version"></a>
   <img src="https://img.shields.io/badge/skills-100%2C000%2B-orange" alt="100,000+ skills">
+  <img src="https://img.shields.io/badge/platforms-15+-blue" alt="15+ platforms">
   <a href="https://github.com/agentskill-sh/ags/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License"></a>
 </p>
 
