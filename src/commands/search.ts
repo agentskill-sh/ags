@@ -55,31 +55,30 @@ export async function searchCommand(args: string[]): Promise<void> {
 
   console.log(`\nSkills matching "${query}" (${data.total} results)\n`)
 
-  // Calculate column widths
+  const truncate = (s: string, max: number) => s.length > max ? s.slice(0, max - 1) + '\u2026' : s
+
   const rows = data.results.map(s => ({
     name: s.name,
     owner: `@${s.owner}`,
-    installs: s.installCount.toLocaleString(),
-    quality: s.contentQualityScore != null ? `${s.contentQualityScore}/100` : '\u2014',
+    desc: truncate(s.description || '', 60),
     security: s.securityScore != null ? `${s.securityScore}/100` : '\u2014',
   }))
 
   const cols = {
     name: Math.max(4, ...rows.map(r => r.name.length)),
     owner: Math.max(6, ...rows.map(r => r.owner.length)),
-    installs: Math.max(8, ...rows.map(r => r.installs.length)),
-    quality: Math.max(7, ...rows.map(r => r.quality.length)),
+    desc: Math.max(11, ...rows.map(r => r.desc.length)),
     security: Math.max(8, ...rows.map(r => r.security.length)),
   }
 
   const pad = (s: string, w: number) => s + ' '.repeat(Math.max(0, w - s.length))
 
-  console.log(`  ${pad('Name', cols.name)}  ${pad('Author', cols.owner)}  ${pad('Installs', cols.installs)}  ${pad('Quality', cols.quality)}  ${pad('Security', cols.security)}`)
-  console.log(`  ${'-'.repeat(cols.name)}  ${'-'.repeat(cols.owner)}  ${'-'.repeat(cols.installs)}  ${'-'.repeat(cols.quality)}  ${'-'.repeat(cols.security)}`)
+  console.log(`  ${pad('Name', cols.name)}  ${pad('Author', cols.owner)}  ${pad('Security', cols.security)}  Description`)
+  console.log(`  ${'-'.repeat(cols.name)}  ${'-'.repeat(cols.owner)}  ${'-'.repeat(cols.security)}  ${'-'.repeat(11)}`)
 
   for (const r of rows) {
-    console.log(`  ${pad(r.name, cols.name)}  ${pad(r.owner, cols.owner)}  ${pad(r.installs, cols.installs)}  ${pad(r.quality, cols.quality)}  ${pad(r.security, cols.security)}`)
+    console.log(`  ${pad(r.name, cols.name)}  ${pad(r.owner, cols.owner)}  ${pad(r.security, cols.security)}  ${r.desc}`)
   }
 
-  console.log(`\nInstall: ags install <slug>`)
+  console.log(`\nInstall: npx @agentskill.sh/cli install <slug>`)
 }

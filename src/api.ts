@@ -1,5 +1,5 @@
 const API_BASE = 'https://agentskill.sh/api'
-const VERSION = '1.0.7'
+const VERSION = '1.0.8'
 
 export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
