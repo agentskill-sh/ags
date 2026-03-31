@@ -17,7 +17,7 @@ export async function updateCommand(args: string[]): Promise<void> {
   const jsonFlag = args.includes('--json')
 
   const lock = readLock()
-  const installed = Object.values(lock.skills)
+  const installed = Object.values(lock.skills).filter((sk) => sk.slug && sk.contentSha)
 
   if (!installed.length) {
     if (jsonFlag) {

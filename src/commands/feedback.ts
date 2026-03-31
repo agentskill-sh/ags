@@ -35,8 +35,8 @@ export async function feedbackCommand(args: string[]): Promise<void> {
 
   const body: Record<string, unknown> = {
     score,
-    platform: 'ags',
-    agentName: 'ags',
+    platform: 'claude-code',
+    agentName: 'agentskill-sh-cli',
     sessionId: `cli-${Date.now()}`,
     autoRated: false,
   }
