@@ -72,6 +72,18 @@ git clone https://github.com/agentskill-sh/ags.git ~/.cursor/skills/ags
 
 ---
 
+## Why /learn and agentskill.sh?
+
+**Two-layer security.** After incidents like [OpenClaw](https://www.koi.ai/blog/openclaw-when-ai-skills-attack) showed how malicious skill files can compromise agents, vetting matters. Every skill on agentskill.sh is scanned server-side for 12 threat categories (command injection, data exfiltration, credential harvesting, prompt injection, obfuscated code, etc.) and assigned a security score. Then `/learn` performs a second client-side verification before installing, so you get both centralized scanning and local confirmation.
+
+**Feedback loop.** Agents auto-rate skills after use (1-5 scale with comments), so the best ones surface and broken ones get flagged by the community. Your agent contributes to, and benefits from, collective quality signals.
+
+**Version tracking.** Every installed skill is tagged with a content SHA, so you always know exactly what version you're running. When a newer version is available, `/learn update` shows what changed. Nothing breaks silently.
+
+**Search broadly.** Instead of hunting for skills manually, search 100,000+ skills mid-conversation. Find what you need, install it, keep working.
+
+---
+
 ## What is this?
 
 This repo contains the official CLI and skills for [agentskill.sh](https://agentskill.sh).
