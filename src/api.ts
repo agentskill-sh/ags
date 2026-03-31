@@ -1,12 +1,12 @@
 const API_BASE = 'https://agentskill.sh/api'
-const VERSION = '0.2.0'
+const VERSION = '1.0.0'
 
 export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      'User-Agent': `learn-skills/${VERSION}`,
+      'User-Agent': `ags/${VERSION}`,
       ...options?.headers,
     },
   })

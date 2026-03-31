@@ -33,7 +33,7 @@ export async function searchCommand(args: string[]): Promise<void> {
     .join(' ')
 
   if (!query) {
-    console.error('Usage: learn-skills search <query> [--json] [--limit N] [--platform NAME]')
+    console.error('Usage: ags search <query> [--json] [--limit N] [--platform NAME]')
     process.exit(1)
   }
 
@@ -81,5 +81,5 @@ export async function searchCommand(args: string[]): Promise<void> {
     console.log(`  ${pad(r.name, cols.name)}  ${pad(r.owner, cols.owner)}  ${pad(r.installs, cols.installs)}  ${pad(r.quality, cols.quality)}  ${pad(r.security, cols.security)}`)
   }
 
-  console.log(`\nInstall: learn-skills install <slug>`)
+  console.log(`\nInstall: ags install <slug>`)
 }

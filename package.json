@@ -1,10 +1,10 @@
 {
-  "name": "learn-skills",
-  "version": "0.2.0",
-  "description": "Search, install, and manage AI agent skills from agentskill.sh",
+  "name": "ags",
+  "version": "1.0.0",
+  "description": "Agent Skill CLI. Search, install, review, and manage AI agent skills from agentskill.sh.",
   "type": "module",
   "bin": {
-    "learn-skills": "./dist/index.js"
+    "ags": "./dist/index.js"
   },
   "main": "./dist/index.js",
   "files": [
@@ -26,14 +26,15 @@
     "windsurf",
     "codex",
     "gemini",
-    "agentskill"
+    "agentskill",
+    "ags"
   ],
   "author": "agentskill.sh",
   "license": "MIT",
   "homepage": "https://agentskill.sh",
   "repository": {
     "type": "git",
-    "url": "https://github.com/agentskill-sh/learn"
+    "url": "https://github.com/agentskill-sh/ags"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

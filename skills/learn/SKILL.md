@@ -18,15 +18,15 @@ Use this skill when the user asks to find, search, discover, or install agent sk
 
 ## CLI Dependency
 
-This skill delegates all operations to the `learn-skills` npm package. Before executing any command, ensure the CLI is available:
+This skill delegates all operations to the `ags` npm package. Before executing any command, ensure the CLI is available:
 
 ```bash
-npx learn-skills --version
+npx ags --version
 ```
 
 If this fails, the CLI will be auto-downloaded by npx on first use. No manual installation is needed.
 
-All commands below use `npx learn-skills` (abbreviated as `npx learn-skills` in examples). The `--json` flag is used to get structured output for parsing.
+All commands below use `npx ags` (abbreviated as `npx ags` in examples). The `--json` flag is used to get structured output for parsing.
 
 ---
 
@@ -70,7 +70,7 @@ This skill registers a single command, `/learn`, with subcommands for all operat
 When the user runs `/learn` followed by a search query, search for matching skills.
 
 **Steps:**
-1. Run via Bash: `npx learn-skills search "<query>" --json --limit 5`
+1. Run via Bash: `npx ags search "<query>" --json --limit 5`
 2. Parse the JSON response (has `results` array with `slug`, `name`, `owner`, `description`, `installCount`, `securityScore`, `contentQualityScore`)
 3. Display results using a **clean markdown table** format:
    ```
@@ -98,7 +98,7 @@ If no results are found, say: "No skills found for '<query>'. Try different keyw
 When the argument starts with `@`, treat it as a direct install request.
 
 **Steps:**
-1. Run via Bash: `npx learn-skills install @<owner>/<slug> --json`
+1. Run via Bash: `npx ags install @<owner>/<slug> --json`
 2. If successful, show the post-install summary (see **Install Flow** step 4)
 3. If it fails, say: "Skill @<owner>/<slug> not found. Check the name at https://agentskill.sh"
 
@@ -124,7 +124,7 @@ When the argument starts with `skillset:`, treat it as a skillset install reques
    ...
    ```
 5. **Confirm installation** (see **Platform Interaction**)
-6. If confirmed, install each skill: `npx learn-skills install <slug> --json` for each
+6. If confirmed, install each skill: `npx ags install <slug> --json` for each
 7. Show post-install summary
 
 ### `/learn <url>` — Install from URL
@@ -146,7 +146,7 @@ When `/learn` is run with no arguments, analyze the current project and recommen
    - Check for config files: `tailwind.config`, `docker-compose.yml`, `prisma/schema.prisma`
    - Read the current git branch name via Bash: `git branch --show-current`
 2. Build a search query from detected context (e.g., "nextjs prisma", "stripe payments")
-3. Run: `npx learn-skills search "<constructed query>" --json --limit 5`
+3. Run: `npx ags search "<constructed query>" --json --limit 5`
 4. Present results with a context header:
    ```
    ## Recommended for Your Project
@@ -165,7 +165,7 @@ When `/learn` is run with no arguments, analyze the current project and recommen
 ### `/learn feedback <slug> <score> [comment]` — Rate a Skill
 
 **Steps:**
-1. Run via Bash: `npx learn-skills feedback <slug> <score> <comment if provided>`
+1. Run via Bash: `npx ags feedback <slug> <score> <comment if provided>`
 2. Confirm to the user:
    ```
    ## Feedback Submitted
@@ -179,7 +179,7 @@ When `/learn` is run with no arguments, analyze the current project and recommen
 ### `/learn list` — Show Installed Skills
 
 **Steps:**
-1. Run via Bash: `npx learn-skills list --json`
+1. Run via Bash: `npx ags list --json`
 2. Parse the JSON response (has `skills` array with `slug`, `owner`, `contentSha`, `installed`, `dir`)
 3. Display using a **clean table format**:
    ```
@@ -196,7 +196,7 @@ When `/learn` is run with no arguments, analyze the current project and recommen
 ### `/learn update` — Check for Updates
 
 **Steps:**
-1. Run via Bash: `npx learn-skills update --json`
+1. Run via Bash: `npx ags update --json`
 2. Parse the JSON response (`updated` array and `upToDate` count)
 3. If updates were applied:
    ```
@@ -218,7 +218,7 @@ When `/learn` is run with no arguments, analyze the current project and recommen
 ### `/learn remove <slug>` — Uninstall a Skill
 
 **Steps:**
-1. Run via Bash: `npx learn-skills remove <slug>`
+1. Run via Bash: `npx ags remove <slug>`
 2. Confirm: "Removed **<slug>** from installed skills."
 
 ---
@@ -228,7 +228,7 @@ When `/learn` is run with no arguments, analyze the current project and recommen
 This is the shared installation procedure used by search, direct install, and URL install.
 
 **Steps:**
-1. First, get skill info to show preview. Run via Bash: `npx learn-skills search "<slug>" --json --limit 1`
+1. First, get skill info to show preview. Run via Bash: `npx ags search "<slug>" --json --limit 1`
    Or if coming from a search result, use the data already available.
 2. Show the skill preview:
    ```
@@ -246,7 +246,7 @@ This is the shared installation procedure used by search, direct install, and UR
    - If `AskUserQuestion` is available: header = "Install", question = "Install **<name>** by @<owner>?", options = "Yes, install" / "No, cancel"
    - If not available: ask "Install **<name>** by @owner? (yes/no)"
 4. **Security check:** If `securityScore` is below 30, include a warning before confirming.
-5. If confirmed, run via Bash: `npx learn-skills install <slug> --json`
+5. If confirmed, run via Bash: `npx ags install <slug> --json`
 6. Parse the JSON result (has `slug`, `name`, `owner`, `installDir`, `filesWritten`, `securityScore`, `contentQualityScore`)
 7. Show post-install summary:
    ```
@@ -271,7 +271,7 @@ Before executing any subcommand, check if this `/learn` skill itself is up to da
 3. Compare the local `contentSha` with the remote `contentSha`
 4. If they match, proceed with the user's command
 5. If they differ:
-   a. Run via Bash: `npx learn-skills install learn`
+   a. Run via Bash: `npx ags install learn`
    b. Briefly note: "Updated /learn skill to latest version."
    c. Proceed with the user's command
 6. If the API is unreachable, proceed with current version silently
@@ -301,7 +301,7 @@ Rate a skill **immediately after completing a task** where the skill was used. D
 After using a skill to complete a task:
 
 1. **Evaluate silently** using the rubric above
-2. **Submit the rating** via Bash: `npx learn-skills feedback <slug> <score> "<brief comment>"`
+2. **Submit the rating** via Bash: `npx ags feedback <slug> <score> "<brief comment>"`
 3. **Show a brief note** to the user (do not block):
    ```
    ---
@@ -313,7 +313,7 @@ After using a skill to complete a task:
 
 If the user disagrees with your auto-rating, they can override it:
 - `/learn feedback <slug> <new-score> [comment]`
-- Or directly: `npx learn-skills feedback <slug> <new-score> [comment]`
+- Or directly: `npx ags feedback <slug> <new-score> [comment]`
 
 The override will update the rating. Always respect user overrides.
 
@@ -333,7 +333,7 @@ Track which skills from agentskill.sh are used during the conversation to ensure
 At the end of a task or when the conversation seems to be wrapping up:
 
 1. **Auto-rate any unrated skills** using the rubric above
-2. **Submit each** via Bash: `npx learn-skills feedback <slug> <score> "<comment>"`
+2. **Submit each** via Bash: `npx ags feedback <slug> <score> "<comment>"`
 3. **Notify the user** with a summary:
    ```
    ---
@@ -368,7 +368,7 @@ If user provides a rating, submit it (this overrides any auto-rating).
 
 | Scenario | Response |
 |----------|----------|
-| CLI not available / npx fails | "Installing agentskill CLI..." and retry once. If still fails: "Could not run agentskill CLI. Try `npm install -g learn-skills` or browse https://agentskill.sh" |
+| CLI not available / npx fails | "Installing agentskill CLI..." and retry once. If still fails: "Could not run agentskill CLI. Try `npm install -g ags` or browse https://agentskill.sh" |
 | No search results | "No skills found for '<query>'. Try different keywords or browse at https://agentskill.sh" |
 | Skill not found (404) | "Skill '<slug>' not found. It may have been removed. Browse available skills at https://agentskill.sh" |
 | Rate limited (429) | "Too many requests. Please wait a moment and try again." |

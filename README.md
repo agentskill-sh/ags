@@ -2,38 +2,25 @@
   <img src="assets/banner.jpg" alt="/learn Kung Fu" width="100%">
 </p>
 
-<h1 align="center">learn-skills</h1>
+<h1 align="center">ags</h1>
 
 <p align="center">
-  <b>Search, install, and manage AI agent skills from <a href="https://agentskill.sh">agentskill.sh</a>.</b>
+  <b>Agent Skill CLI for <a href="https://agentskill.sh">agentskill.sh</a></b>
 </p>
 
 <p align="center">
-  <i>Like apt-get, but for AI agents.</i>
+  <i>Search, install, review, and manage skills for your AI agents.</i>
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/learn-skills"><img src="https://img.shields.io/npm/v/learn-skills" alt="npm version"></a>
-  <a href="https://www.npmjs.com/package/learn-skills"><img src="https://img.shields.io/npm/dm/learn-skills" alt="npm downloads"></a>
+  <a href="https://www.npmjs.com/package/ags"><img src="https://img.shields.io/npm/v/ags" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/ags"><img src="https://img.shields.io/npm/dm/ags" alt="npm downloads"></a>
   <img src="https://img.shields.io/badge/platforms-15+-blue" alt="15+ platforms">
-  <a href="https://github.com/agentskill-sh/learn/blob/main/LICENSE"><img src="https://img.shields.io/github/license/agentskill-sh/learn?color=blue" alt="License"></a>
-  <a href="https://github.com/agentskill-sh/learn/stargazers"><img src="https://img.shields.io/github/stars/agentskill-sh/learn" alt="GitHub stars"></a>
+  <a href="https://github.com/agentskill-sh/ags/blob/main/LICENSE"><img src="https://img.shields.io/github/license/agentskill-sh/ags?color=blue" alt="License"></a>
+  <a href="https://github.com/agentskill-sh/ags/stargazers"><img src="https://img.shields.io/github/stars/agentskill-sh/ags" alt="GitHub stars"></a>
 </p>
 
 <br />
-
----
-
-## What is this?
-
-This repo contains two things:
-
-| What | Description |
-|------|-------------|
-| **`learn-skills` CLI** | Terminal tool to search, install, list, update, remove, and rate skills. Published to npm as [`learn-skills`](https://www.npmjs.com/package/learn-skills). |
-| **`/learn` skill** | An agent skill (SKILL.md) that gives your AI agent the same capabilities mid-conversation. It uses the CLI under the hood. |
-
-Both connect to [agentskill.sh](https://agentskill.sh), a directory of 100,000+ skills for Claude Code, Cursor, Copilot, Codex, Windsurf, Gemini CLI, and 10+ other platforms.
 
 ---
 
@@ -42,78 +29,74 @@ Both connect to [agentskill.sh](https://agentskill.sh), a directory of 100,000+ 
 Copy-paste this into your AI agent (Claude Code, Cursor, Copilot, Codex, Windsurf, Gemini CLI, etc.):
 
 ```
-Install the /learn skill from https://github.com/agentskill-sh/learn then search for skills relevant to this project
+Install the /learn skill from https://github.com/agentskill-sh/ags then search for skills relevant to this project
 ```
 
-That's it. Your agent will install `/learn`, analyze your project, and suggest relevant skills.
-
-### Other install methods
+That's it. Your agent will install `/learn`, analyze your project, and suggest relevant skills from a directory of 100,000+.
 
 <details>
-<summary>Plugin marketplace (Claude Code)</summary>
+<summary>Other install methods</summary>
+
+**Plugin marketplace (Claude Code)**
 
 ```bash
 /plugin marketplace add https://agentskill.sh/marketplace.json
 /plugin install learn@agentskill-sh
 ```
 
-</details>
-
-<details>
-<summary>CLI (terminal)</summary>
+**CLI (terminal)**
 
 ```bash
-npx learn-skills search "react best practices"
-npx learn-skills install seo-optimizer
+npx ags search "react best practices"
+npx ags install seo-optimizer
 ```
 
 Or install globally:
 
 ```bash
-npm install -g learn-skills
-learn-skills search react
+npm install -g ags
+ags search react
 ```
 
-</details>
-
-<details>
-<summary>Git clone</summary>
+**Git clone**
 
 ```bash
 # Claude Code
-git clone https://github.com/agentskill-sh/learn.git ~/.claude/skills/learn
+git clone https://github.com/agentskill-sh/ags.git ~/.claude/skills/ags
 
 # Cursor
-git clone https://github.com/agentskill-sh/learn.git ~/.cursor/skills/learn
+git clone https://github.com/agentskill-sh/ags.git ~/.cursor/skills/ags
 ```
 
 </details>
 
-### Once installed
+---
 
-Your agent can search and install skills mid-conversation:
+## What is this?
 
-```
-/learn seo
-/learn @vercel/nextjs-expert
-/learn list
-```
+This repo contains the official CLI and skills for [agentskill.sh](https://agentskill.sh).
+
+| What | Description |
+|------|-------------|
+| **`ags` CLI** | Terminal tool to search, install, list, update, remove, and rate skills. Published to npm as [`ags`](https://www.npmjs.com/package/ags). |
+| **`/learn` skill** | Agent skill that gives your AI the same capabilities mid-conversation. Uses the CLI under the hood. |
+| **`skill-reviewer` skill** | Reviews SKILL.md files against best practices and scores them on 10 quality dimensions. |
 
 ---
 
 ## CLI Commands
 
 ```bash
-learn-skills search <query>              # Search 100,000+ skills
-learn-skills install <slug>              # Install a skill
-learn-skills install @owner/skill-name   # Install from specific author
-learn-skills list                        # Show installed skills
-learn-skills update                      # Check for and apply updates
-learn-skills remove <slug>               # Uninstall a skill
-learn-skills feedback <slug> <1-5> [msg] # Rate a skill
+ags search <query>              # Search 100,000+ skills
+ags install <slug>              # Install a skill
+ags install @owner/skill-name   # Install from specific author
+ags list                        # Show installed skills
+ags update                      # Check for and apply updates
+ags remove <slug>               # Uninstall a skill
+ags feedback <slug> <1-5> [msg] # Rate a skill
 ```
 
-All commands support `--json` for structured output. Useful for piping or agent consumption.
+All commands support `--json` for structured output.
 
 ---
 
@@ -139,22 +122,22 @@ When using the skill inside your agent:
 
 ```bash
 # Find SEO skills
-learn-skills search "programmatic seo"
+ags search "programmatic seo"
 
 # Install a specific skill from an author
-learn-skills install @anthropics/react-best-practices
+ags install @anthropics/react-best-practices
 
 # Install for Cursor instead of Claude Code
-learn-skills install seo-optimizer --platform cursor
+ags install seo-optimizer --platform cursor
 
 # Rate a skill you used
-learn-skills feedback seo-optimizer 5 "Excellent keyword clustering"
+ags feedback seo-optimizer 5 "Excellent keyword clustering"
 
 # Update all installed skills
-learn-skills update
+ags update
 
 # List installed skills as JSON
-learn-skills list --json
+ags list --json
 ```
 
 ---
@@ -167,23 +150,11 @@ learn-skills list --json
 4. **Auto-review**: after using a skill, your agent rates it automatically (1-5 scale)
 5. **Update** compares local content hashes against the registry and re-installs outdated skills
 
-Every installed skill includes a metadata header:
-
-```
-# --- agentskill.sh ---
-# slug: seo-optimizer
-# owner: anthropic
-# contentSha: a3f8c2e
-# installed: 2026-03-31T10:30:00Z
-# source: https://agentskill.sh/seo-optimizer
-# ---
-```
-
 ---
 
 ## Supported Platforms
 
-The CLI auto-detects your platform from the working directory. Override with `--platform <name>`.
+The CLI auto-detects your platform. Override with `--platform <name>`.
 
 | Platform | Skill directory | Flag |
 |----------|----------------|------|
@@ -207,9 +178,9 @@ The CLI auto-detects your platform from the working directory. Override with `--
 
 ## Security
 
-Every skill on agentskill.sh has a security score (0-100). The CLI shows scores during search and install. Skills below 30 trigger a warning before installation.
+Every skill on agentskill.sh has a security score (0-100). Skills below 30 trigger a warning before installation.
 
-The `/learn` skill includes a [security pattern library](references/SECURITY.md) for detecting prompt injection, data exfiltration, obfuscated code, and other threats.
+The `/learn` skill includes a [security pattern library](skills/learn/references/SECURITY.md) for detecting prompt injection, data exfiltration, obfuscated code, and other threats.
 
 ---
 
@@ -217,24 +188,31 @@ The `/learn` skill includes a [security pattern library](references/SECURITY.md)
 
 ```
 .
-├── README.md              # This file
-├── SKILL.md               # The /learn agent skill
-├── references/
-│   └── SECURITY.md        # Security scanning patterns
-├── .claude-plugin/        # Claude plugin marketplace metadata
-├── package.json           # npm package (learn-skills)
-├── tsconfig.json
-├── src/                   # CLI source
-│   ├── index.ts           # Entry point and command router
-│   ├── api.ts             # API client
-│   ├── platform.ts        # Platform detection
+├── README.md
+├── package.json              # npm package: ags
+├── src/                      # CLI source
+│   ├── index.ts
+│   ├── api.ts
+│   ├── platform.ts
 │   └── commands/
 │       ├── search.ts
 │       ├── install.ts
 │       ├── list.ts
 │       ├── remove.ts
-│       ├── feedback.ts
-│       └── update.ts
+│       ├── update.ts
+│       └── feedback.ts
+├── skills/
+│   ├── learn/                # /learn skill
+│   │   ├── SKILL.md
+│   │   └── references/
+│   │       └── SECURITY.md
+│   └── skill-reviewer/       # Skill quality reviewer
+│       ├── SKILL.md
+│       └── references/
+│           └── rubric.md
+├── assets/
+│   └── banner.jpg
+├── .claude-plugin/           # Claude plugin marketplace
 └── LICENSE
 ```
 
@@ -242,7 +220,7 @@ The `/learn` skill includes a [security pattern library](references/SECURITY.md)
 
 ## Contributing
 
-Found a bug? Want to add a platform? PRs welcome.
+Found a bug? Want to add a platform or a new skill? PRs welcome.
 
 For creating and publishing your own skills, see the [skill creation guide](https://agentskill.sh/readme#how-to-create-a-skill).
 

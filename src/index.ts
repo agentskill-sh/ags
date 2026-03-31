@@ -7,19 +7,19 @@ import { removeCommand } from './commands/remove.js'
 import { feedbackCommand } from './commands/feedback.js'
 import { updateCommand } from './commands/update.js'
 
-const VERSION = '0.2.0'
+const VERSION = '1.0.0'
 
-const HELP = `learn-skills v${VERSION} — search, install, and manage AI agent skills
+const HELP = `ags v${VERSION} — search, install, and manage AI agent skills
 
 Usage:
-  learn-skills search <query> [--json] [--limit N] [--platform NAME]
-  learn-skills install <slug>  [--json] [--platform NAME]
-  learn-skills list            [--json]
-  learn-skills remove <slug>
-  learn-skills feedback <slug> <1-5> [comment]
-  learn-skills update
-  learn-skills --version
-  learn-skills --help
+  ags search <query> [--json] [--limit N] [--platform NAME]
+  ags install <slug>  [--json] [--platform NAME]
+  ags list            [--json]
+  ags remove <slug>
+  ags feedback <slug> <1-5> [comment]
+  ags update
+  ags --version
+  ags --help
 
 Commands:
   search    Search for skills on agentskill.sh
@@ -30,13 +30,13 @@ Commands:
   update    Check for and apply skill updates
 
 Examples:
-  learn-skills search react
-  learn-skills install seo-optimizer
-  learn-skills install @anthropics/react-best-practices
-  learn-skills list --json
-  learn-skills remove seo-optimizer
-  learn-skills feedback seo-optimizer 5 "Worked perfectly"
-  learn-skills update
+  ags search react
+  ags install seo-optimizer
+  ags install @anthropics/react-best-practices
+  ags list --json
+  ags remove seo-optimizer
+  ags feedback seo-optimizer 5 "Worked perfectly"
+  ags update
 
 More info: https://agentskill.sh/docs
 `
@@ -86,7 +86,7 @@ async function main(): Promise<void> {
         break
       default:
         console.error(`Unknown command: ${command}`)
-        console.error('Run "learn-skills --help" for usage.')
+        console.error('Run "ags --help" for usage.')
         process.exit(1)
     }
   } catch (err) {

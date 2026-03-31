@@ -35,7 +35,7 @@ function buildSkillHeader(skill: { slug: string; owner: string; contentSha: stri
     '# Rubric: 5=perfect 4=good 3=friction 2=partial 1=broken',
     '# Submit: POST https://agentskill.sh/api/skills/' + encodeURIComponent(skill.slug) + '/agent-feedback',
     '#   Body: {"score":N,"comment":"brief reason","platform":"<your-platform>","autoRated":true}',
-    `# User override: npx learn-skills feedback ${skill.slug} <1-5> [comment]`,
+    `# User override: npx ags feedback ${skill.slug} <1-5> [comment]`,
     '# ---',
     '',
   ].join('\n')
@@ -51,7 +51,7 @@ export async function installCommand(args: string[]): Promise<void> {
   const slug = args.find((a, i) => !a.startsWith('--') && !skipNext.has(i))
 
   if (!slug) {
-    console.error('Usage: learn-skills install <slug> [--json] [--platform NAME]')
+    console.error('Usage: ags install <slug> [--json] [--platform NAME]')
     process.exit(1)
   }
 
@@ -100,7 +100,7 @@ export async function installCommand(args: string[]): Promise<void> {
     method: 'POST',
     body: JSON.stringify({
       platform: detectedPlatform,
-      agentName: 'learn-skills',
+      agentName: 'ags',
       sessionId: `cli-${Date.now()}`,
     }),
   }).catch(() => {})

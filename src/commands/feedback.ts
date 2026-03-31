@@ -16,11 +16,11 @@ export async function feedbackCommand(args: string[]): Promise<void> {
   const comment = filteredArgs.slice(2).join(' ') || undefined
 
   if (!slug || !scoreStr) {
-    console.error('Usage: learn-skills feedback <slug> <1-5> [comment]')
+    console.error('Usage: ags feedback <slug> <1-5> [comment]')
     console.error('')
     console.error('Examples:')
-    console.error('  learn-skills feedback seo-optimizer 5')
-    console.error('  learn-skills feedback @owner/skill 3 "Instructions were unclear"')
+    console.error('  ags feedback seo-optimizer 5')
+    console.error('  ags feedback @owner/skill 3 "Instructions were unclear"')
     process.exit(1)
   }
 
@@ -38,7 +38,7 @@ export async function feedbackCommand(args: string[]): Promise<void> {
   const body: Record<string, unknown> = {
     score,
     platform,
-    agentName: 'learn-skills',
+    agentName: 'ags',
     sessionId: `cli-${Date.now()}`,
     autoRated: false,
   }
