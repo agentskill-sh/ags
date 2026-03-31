@@ -7,7 +7,7 @@
     "url": "https://agentskill.sh"
   },
   "homepage": "https://agentskill.sh/install",
-  "repository": "https://github.com/agentskill-sh/learn",
+  "repository": "https://github.com/agentskill-sh/ags",
   "license": "MIT",
   "keywords": ["skills", "learn", "install", "agent", "directory", "marketplace"]
 }
