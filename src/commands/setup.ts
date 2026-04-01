@@ -1,7 +1,7 @@
 import * as p from '@clack/prompts'
 import pc from 'picocolors'
 import { apiFetch } from '../api.js'
-import { showLogo, ORANGE } from '../ui.js'
+import { ORANGE } from '../ui.js'
 import {
   detectInstalledAgents,
   getUniversalAgents,
@@ -15,7 +15,6 @@ import type { InstallResponse } from '../types.js'
 const OFFICIAL_SKILLS = ['agentskill-sh/learn', 'agentskill-sh/review-skill']
 
 export async function setupCommand(_args: string[]): Promise<void> {
-  showLogo()
 
   // Detect installed agents
   const s = p.spinner()
