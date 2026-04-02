@@ -5,7 +5,7 @@ import { join } from 'path'
 import { readLock, removeFromLock } from '../skill-lock.js'
 import { agents, getAgentDisplayName } from '../agents.js'
 import { ORANGE } from '../ui.js'
-import { sanitizeName } from '../installer.js'
+import { sanitizeName, skillDirName } from '../installer.js'
 
 export async function removeCommand(args: string[]): Promise<void> {
   const yesFlag = args.includes('--yes') || args.includes('-y')
@@ -82,18 +82,26 @@ export async function removeCommand(args: string[]): Promise<void> {
 }
 
 function removeSkill(slug: string, agentTypes: string[]): void {
-  const safeName = sanitizeName(slug)
-
   // Remove from each agent's skill directory
   if (agentTypes.length) {
     for (const agentType of agentTypes) {
       const config = agents[agentType]
       if (!config) continue
 
+      const dirName = skillDirName(slug, agentType)
       const dirs = [
-        join(process.cwd(), config.skillsDir, safeName),
-        join(config.globalSkillsDir, safeName),
+        join(process.cwd(), config.skillsDir, dirName),
+        join(config.globalSkillsDir, dirName),
       ]
+
+      // Also try the old namespaced name for backwards compat
+      const legacyName = sanitizeName(slug)
+      if (legacyName !== dirName) {
+        dirs.push(
+          join(process.cwd(), config.skillsDir, legacyName),
+          join(config.globalSkillsDir, legacyName),
+        )
+      }
 
       for (const dir of dirs) {
         if (existsSync(dir)) {
@@ -103,12 +111,20 @@ function removeSkill(slug: string, agentTypes: string[]): void {
       }
     }
   } else {
-    // No agents recorded: try all known agent directories
-    for (const [, config] of Object.entries(agents)) {
+    // No agents recorded: try all known agent directories with both naming schemes
+    const namespacedName = sanitizeName(slug)
+    for (const [agentType, config] of Object.entries(agents)) {
+      const dirName = skillDirName(slug, agentType)
       const dirs = [
-        join(process.cwd(), config.skillsDir, safeName),
-        join(config.globalSkillsDir, safeName),
+        join(process.cwd(), config.skillsDir, dirName),
+        join(config.globalSkillsDir, dirName),
       ]
+      if (namespacedName !== dirName) {
+        dirs.push(
+          join(process.cwd(), config.skillsDir, namespacedName),
+          join(config.globalSkillsDir, namespacedName),
+        )
+      }
 
       for (const dir of dirs) {
         if (existsSync(dir)) {

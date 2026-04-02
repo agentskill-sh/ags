@@ -1,7 +1,7 @@
 import { writeFileSync, mkdirSync, symlinkSync, copyFileSync, readdirSync, statSync } from 'fs'
 import { join, dirname } from 'path'
 import type { AgentType, InstallResponse, InstallMode } from './types.js'
-import { agents } from './agents.js'
+import { agents, isUniversalAgent } from './agents.js'
 
 export interface InstallOptions {
   global?: boolean
@@ -17,7 +17,7 @@ export interface InstallResult {
 }
 
 /**
- * Sanitize a skill name into a filesystem-safe slug.
+ * Sanitize a string into a filesystem-safe slug.
  * Strips @owner/ prefix, lowercases, replaces non-alphanumeric with hyphens.
  */
 export function sanitizeName(name: string): string {
@@ -30,13 +30,32 @@ export function sanitizeName(name: string): string {
 }
 
 /**
+ * Get the directory name for a skill based on agent type.
+ *
+ * Universal agents (.agents/skills) use the full namespaced slug to avoid
+ * collisions between skills from different owners (e.g., "agentskill-sh-learn").
+ *
+ * Non-universal agents (.claude/skills, .windsurf/skills, etc.) use just the
+ * skill name because the directory name becomes the slash command name.
+ * E.g., .claude/skills/learn -> /learn
+ */
+export function skillDirName(slug: string, agentType: AgentType): string {
+  if (isUniversalAgent(agentType)) {
+    return sanitizeName(slug)
+  }
+  // Extract the skill name (part after the last /)
+  const parts = slug.split('/')
+  return sanitizeName(parts[parts.length - 1])
+}
+
+/**
  * Resolve the target directory for a skill given an agent and scope.
  */
 function resolveSkillDir(agentType: AgentType, slug: string, global: boolean): string {
   const config = agents[agentType]
   if (!config) throw new Error(`Unknown agent: ${agentType}`)
   const baseDir = global ? config.globalSkillsDir : join(process.cwd(), config.skillsDir)
-  return join(baseDir, sanitizeName(slug))
+  return join(baseDir, skillDirName(slug, agentType))
 }
 
 /**
